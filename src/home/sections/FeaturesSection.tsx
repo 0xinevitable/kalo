@@ -92,6 +92,7 @@ const CardContainer = styled.li`
     #9f69ff 31%,
     rgba(255, 255, 255, 0.57) 100%
   );
+  backdrop-filter: blur(4px);
   box-shadow: 0px 12px 24px 0px rgba(93, 0, 255, 0.26);
 `;
 const CardContent = styled.div`
@@ -107,7 +108,6 @@ const CardContent = styled.div`
 `;
 const CardTitle = styled.h3`
   color: #1d004f;
-  font-family: 'Space Grotesk';
   font-size: 28px;
   font-weight: 700;
   line-height: 103%; /* 28.84px */
@@ -117,7 +117,6 @@ const CardDescription = styled.p`
   flex: 1;
 
   color: #7628ff;
-  font-family: 'Space Grotesk';
   font-size: 16px;
   font-weight: 500;
   line-height: 120%; /* 19.2px */

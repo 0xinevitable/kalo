@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import Image from 'next/image';
 
 import heroBackground from '@/assets/hero-background.jpg';
+import { JostFont } from '@/styles/fonts';
 
 export const HeroSection: React.FC = () => {
   return (
@@ -129,16 +130,16 @@ const BrandLogo = styled.img`
   margin-left: -14px;
 `;
 const Title = styled.h1`
-  margin-top: 28px;
+  margin-top: 40px;
 
   color: #1d004f;
   text-shadow: 0px 12px 49px #d4bcff;
-  font-family: Futura;
+  font-family: ${JostFont.style.fontFamily};
   font-size: 72px;
   font-style: normal;
   font-weight: 500;
   line-height: 105%; /* 75.6px */
-  letter-spacing: -7.2px;
+  letter-spacing: -6px;
   text-transform: uppercase;
 `;
 const Button = styled.button`
@@ -155,7 +156,6 @@ const Button = styled.button`
 
   color: #1d004f;
   text-shadow: 0px 12px 49px #d4bcff;
-  font-family: 'Space Grotesk';
   font-size: 24px;
   font-weight: 700;
   line-height: 105%; /* 25.2px */

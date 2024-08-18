@@ -146,7 +146,6 @@ const Notification = styled.div`
   background: #7d32ff;
 
   color: #c9aaff;
-  font-family: 'Space Grotesk';
   font-size: 16px;
   font-weight: 500;
   letter-spacing: -0.64px;
