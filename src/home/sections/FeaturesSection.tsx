@@ -14,21 +14,21 @@ export const FeaturesSection: React.FC = () => {
           // FIXME:
           description="KiiChain is a layer 1 blockchain built with the Cosmos SDK"
         >
-          <FeatureImage alt="" src={featureDashboard} />
+          <FeatureImage alt="" src={featureDashboard} placeholder="blur" />
         </FeatureCard>
         <FeatureCard
           title={<>Launch Tokens on the Bonding Curve</>}
           // FIXME:
           description="KiiChain is a layer 1 blockchain built with the Cosmos SDK"
         >
-          <FeatureImage alt="" src={featureBondingCurve} />
+          <FeatureImage alt="" src={featureBondingCurve} placeholder="blur" />
         </FeatureCard>
         <FeatureCard
           title={<>Mint Synthetic Assets with RWAs/xTokens</>}
           // FIXME:
           description="KiiChain is a layer 1 blockchain built with the Cosmos SDK"
         >
-          <FeatureImage alt="" src={featureSynth} />
+          <FeatureImage alt="" src={featureSynth} placeholder="blur" />
         </FeatureCard>
       </CardList>
     </Section>
@@ -36,29 +36,22 @@ export const FeaturesSection: React.FC = () => {
 };
 
 const Section = styled.section`
-  padding: 120px 24px 0;
+  margin-top: -170px;
   max-width: 1000px;
   width: 100%;
+  padding-bottom: 64px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  @media screen and (max-width: 700px) {
-    padding: 120px 12px 0;
-  }
+  z-index: 1;
 `;
 
 const CardList = styled.ul`
-  margin-top: 28px;
   width: 100%;
 
   display: flex;
   gap: 8px;
-
-  @media screen and (max-width: 1000px) {
-    flex-direction: column;
-  }
 `;
 
 type FeatureCardProps = {
@@ -105,7 +98,7 @@ const CardContent = styled.div`
   display: flex;
   padding: 0px 18px 24px 18px;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   flex: 1;
 
   @media screen and (max-width: 1000px) {
