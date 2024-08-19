@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
+import { usePassportScore } from '@/hooks/usePassportScore';
+
 declare global {
   interface Window {
     keplr: any;
@@ -8,6 +10,11 @@ declare global {
 }
 
 const HomePage = () => {
+  const { score, loading, error } = usePassportScore(
+    '7865',
+    '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+  );
+
   return (
     <>
       <Notification>
@@ -15,6 +22,12 @@ const HomePage = () => {
         Kinetics is currently in testnet phase
         <SymbolLogo />
       </Notification>
+
+      <div className="mt-[100px]">
+        {loading && <p>Loading...</p>}
+        {error && <p>Error: {error}</p>}
+        {score !== null && <p>Score: {score}</p>}
+      </div>
     </>
   );
 };
