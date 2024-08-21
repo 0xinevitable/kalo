@@ -25,26 +25,46 @@ const HomePage = () => {
     <>
       <Notification />
 
-      <ScoreContainer className="mt-[100px]">
-        <ShieldImage src={shieldImage} alt="" />
-
-        <div className="flex flex-col flex-1">
-          <Field>Humanity Score</Field>
-          <div className="flex items-center gap-[6px]">
-            <span>
-              {score !== null ? (
-                <Score>{score}</Score>
-              ) : loading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                error
-              ) : null}
-            </span>
-            <Verified />
+      <div className="mt-[100px] flex flex-col gap-4">
+        <SummaryContainer>
+          <div className="flex flex-col">
+            <SummaryField>Wallet</SummaryField>
+            <SummaryValue>0x7777...10c4</SummaryValue>
           </div>
-          <Source>Powered by Gitcoin Passport</Source>
-        </div>
-      </ScoreContainer>
+
+          <div className="flex flex-col">
+            <SummaryField>Total Value</SummaryField>
+            <SummaryValue>$5,496.47</SummaryValue>
+          </div>
+        </SummaryContainer>
+
+        <ScoreContainer>
+          <ShieldImage src={shieldImage} alt="" />
+
+          <div className="flex flex-col flex-1">
+            <Field>Humanity Score</Field>
+            <div className="flex items-center gap-[6px]">
+              <span>
+                {score !== null ? (
+                  <Score>{score}</Score>
+                ) : loading ? (
+                  <p>Loading...</p>
+                // ) : error ?  (
+                  error
+                ) : null}
+              </span>
+              <Verified />
+            </div>
+            <Source>Powered by Gitcoin Passport</Source>
+          </div>
+        </ScoreContainer>
+      </div>
+
+      <style global jsx>{`
+        html {
+          background: #f1eef4;
+        }
+      `}</style>
     </>
   );
 };
@@ -57,6 +77,32 @@ const Container = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+const SummaryContainer = styled.div`
+  display: flex;
+  /* FIXME: */
+  padding: 22px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+
+  border-radius: 16px;
+  background: linear-gradient(180deg, #c9aaff 0%, #fff 100%);
+`;
+const SummaryField = styled.span`
+  color: #604294;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.64px;
+`;
+const SummaryValue = styled.span`
+  margin-top: 4px;
+
+  color: #1d004f;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.96px;
 `;
 
 const ScoreContainer = styled.div`

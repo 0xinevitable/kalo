@@ -7,9 +7,6 @@ import {
   http,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { mainnet } from 'viem/chains';
-
-import { STAKING_ABIs } from './staking';
 
 dotenv.config();
 
@@ -71,9 +68,6 @@ const BANK_ABIs = [
     stateMutability: 'view',
     type: 'function',
   },
-
-  // getAllSupply
-  //     function getAllSupply() external view returns (Cosmos.Coin[] memory);
   {
     inputs: [],
     name: 'getAllSupply',
@@ -126,15 +120,6 @@ const kiichain = defineChain({
       http: ['https://a.sentry.testnet.kiivalidator.com:8645'],
     },
   },
-  // blockExplorers: {
-  //   default: { name: 'Explorer', url: 'https://explorer.zora.energy' },
-  // },
-  // contracts: {
-  //   multicall3: {
-  //     address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-  //     blockCreated: 5882,
-  //   },
-  // },
 });
 
 const client = createPublicClient({
@@ -170,6 +155,15 @@ const main = async () => {
   });
 
   console.log('Account address:', account.address);
+
+  // Query available denoms in the Swap precompile
+  const availableDenomsPre = await client.readContract({
+    address: PRECOMPILES.Bank,
+    abi: BANK_ABIs,
+    functionName: 'getAllSpendableBalances',
+    args: [PRECOMPILES.Swap],
+  });
+  console.log(PRECOMPILES.Swap, { availableDenomsPre });
 
   // Get KII balance
   const kiiBalance = await client.getBalance({
@@ -243,6 +237,22 @@ const main = async () => {
     args: [account.address, 'tkii'],
   });
   console.log('Final tKII balance:', formatUnits(finalTkiiBalance, 6));
+
+  // Query available denoms in the Swap precompile
+  const availableDenomsPost = await client.readContract({
+    address: PRECOMPILES.Bank,
+    abi: BANK_ABIs,
+    functionName: 'getAllSpendableBalances',
+    args: [PRECOMPILES.Swap],
+  });
+  console.log(PRECOMPILES.Swap, { availableDenomsPost });
+  // 0xF948f57612E05320A6636a965cA4fbaed3147A0f {
+  //   availableDenomsPost: [ { amount: 1699900000000000n, denom: 'tkii' } ]
+  // }
+
+  // This will only return the same tkii (sKII) balance as before,
+  // which was originally funded in https://github.com/KiiChain/kii-solidity-contracts/blob/2932b6e50cde33f1bc9e7a82148e1b3aa3bc3c70/scripts/send.ts#L57
+  // 1699900000 * 10 ** 6
 };
 
 main().catch(console.error);

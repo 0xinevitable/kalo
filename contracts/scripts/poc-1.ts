@@ -6,9 +6,6 @@ import {
   http,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { mainnet } from 'viem/chains';
-
-import { STAKING_ABIs } from './staking';
 
 dotenv.config();
 
@@ -16,7 +13,6 @@ const PRECOMPILES = {
   Bank: '0x4381dC2aB14285160c808659aEe005D51255adD7',
   Staking: '0xd9A998CaC66092748FfEc7cFBD155Aae1737C2fF',
   Rewards: '0x55684E2CA2BACE0ADC512C1AFF880B15B8EA7214',
-
   // https://github.com/KiiChain/kii-solidity-contracts/blob/2932b6e50cde33f1bc9e7a82148e1b3aa3bc3c70/contracts/Swap.sol#L18
   Swap: '0xF948f57612E05320A6636a965cA4fbaed3147A0f',
 } as const;
