@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import Image from 'next/image';
 import React from 'react';
 
+import kiiToSkiiImage from '@/assets/kii-to-skii.png';
 import shieldImage from '@/assets/shield.png';
 import { Notification } from '@/components/Notification';
 import { usePassportScore } from '@/hooks/usePassportScore';
@@ -25,39 +26,58 @@ const HomePage = () => {
     <>
       <Notification />
 
-      <div className="mt-[100px] flex flex-col gap-4">
-        <SummaryContainer>
-          <div className="flex flex-col">
-            <SummaryField>Wallet</SummaryField>
-            <SummaryValue>0x7777...10c4</SummaryValue>
-          </div>
-
-          <div className="flex flex-col">
-            <SummaryField>Total Value</SummaryField>
-            <SummaryValue>$5,496.47</SummaryValue>
-          </div>
-        </SummaryContainer>
-
-        <ScoreContainer>
-          <ShieldImage src={shieldImage} alt="" />
-
-          <div className="flex flex-col flex-1">
-            <Field>Humanity Score</Field>
-            <div className="flex items-center gap-[6px]">
-              <span>
-                {score !== null ? (
-                  <Score>{score}</Score>
-                ) : loading ? (
-                  <p>Loading...</p>
-                // ) : error ?  (
-                  error
-                ) : null}
-              </span>
-              <Verified />
+      <div className="mt-[100px] flex w-full gap-4">
+        <div className="flex flex-col flex-1 gap-4">
+          <SummaryContainer>
+            <div className="flex flex-col">
+              <SummaryField>Wallet</SummaryField>
+              <SummaryValue>0x7777...10c4</SummaryValue>
             </div>
-            <Source>Powered by Gitcoin Passport</Source>
-          </div>
-        </ScoreContainer>
+
+            <div className="flex flex-col">
+              <SummaryField>Total Value</SummaryField>
+              <SummaryValue>$5,496.47</SummaryValue>
+            </div>
+          </SummaryContainer>
+
+          <ScoreContainer>
+            <ShieldImage src={shieldImage} alt="" />
+
+            <div className="flex flex-col flex-1">
+              <Field>Humanity Score</Field>
+              <div className="flex items-center gap-[6px]">
+                <span>
+                  {score !== null ? (
+                    <Score>{score}</Score>
+                  ) : loading ? (
+                    <p>Loading...</p>
+                  ) : error ? (
+                    error
+                  ) : null}
+                </span>
+                <Verified />
+              </div>
+              <Source>Powered by Gitcoin Passport</Source>
+            </div>
+          </ScoreContainer>
+        </div>
+
+        <div className="flex flex-col flex-1">
+          <StakeContainer>
+            <GovernanceTokenCard></GovernanceTokenCard>
+            <StakeCard>
+              <StakeImageWrapper>
+                <StakeImage src={kiiToSkiiImage} alt="" />
+                <AbsoluteStakeImage src={kiiToSkiiImage} alt="" />
+              </StakeImageWrapper>
+              <StakeTitle>Stake KII and receive sKII</StakeTitle>
+              <div className="mt-[10px] flex items-center w-full gap-[6px]">
+                <Button className="flex-1">Stake</Button>
+                <Button className="flex-1">Unstake</Button>
+              </div>
+            </StakeCard>
+          </StakeContainer>
+        </div>
       </div>
 
       <style global jsx>{`
@@ -171,4 +191,100 @@ const Source = styled.span`
   font-size: 12px;
   font-weight: 500;
   letter-spacing: -0.48px;
+`;
+
+const StakeContainer = styled.div`
+  width: 100%;
+
+  display: flex;
+  padding: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+
+  border-radius: 16px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#f1eef4, #f1eef4) padding-box,
+    linear-gradient(
+        144deg,
+        rgba(174, 1, 227, 0.22) 20.77%,
+        rgba(50, 27, 74, 0.22) 50.44%,
+        rgba(0, 117, 255, 0.22) 79.52%
+      )
+      border-box;
+`;
+const StakeCard = styled.div`
+  width: 100%;
+
+  padding: 12px;
+  border-radius: 16px;
+  /* background: #fff; */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 5%, #fff 100%);
+
+  box-shadow: 0px 16px 32px 0px rgba(29, 0, 79, 0.06);
+`;
+const StakeImageWrapper = styled.div`
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+
+  width: 116px;
+  height: 132px;
+  z-index: 0;
+`;
+const StakeImage = styled(Image)`
+  width: 100%;
+  height: 100%;
+`;
+const AbsoluteStakeImage = styled(StakeImage)`
+  width: 100%;
+  height: 100%;
+
+  position: absolute;
+  top: 18px;
+  right: 36px;
+  z-index: -1;
+  filter: blur(23px);
+  opacity: 0.65;
+`;
+const StakeTitle = styled.h2`
+  margin-top: 10px;
+
+  color: #1d004f;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.88px;
+`;
+
+const Button = styled.button`
+  display: flex;
+  height: 36px;
+  padding: 3px 11px;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 12px;
+  border: 0px solid #adadad;
+  background: #ddd;
+`;
+
+const GovernanceTokenCard = styled.div`
+  background: #fff;
+  box-shadow:
+    0px -4px 8px 0px rgba(93, 0, 255, 0.11),
+    0px 4px 6px 0px rgba(141, 175, 255, 0.4);
+
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#f1eef4, #f1eef4) padding-box,
+    linear-gradient(
+        144deg,
+        rgba(174, 1, 227, 1) 20.77%,
+        rgba(50, 27, 74, 1) 50.44%,
+        rgba(0, 117, 255, 1) 79.52%
+      )
+      border-box;
 `;
