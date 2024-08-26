@@ -28,83 +28,108 @@ const HomePage = () => {
     <>
       <Notification />
 
-      <div className="mt-[100px] flex w-full max-w-[1000px] gap-4 mx-auto">
-        <div className="flex flex-col flex-1 gap-4">
-          <SummaryContainer>
-            <div className="flex flex-col">
-              <SummaryField>Wallet</SummaryField>
-              <SummaryValue>0x7777...10c4</SummaryValue>
-            </div>
-
-            <div className="flex flex-col">
-              <SummaryField>Total Value</SummaryField>
-              <SummaryValue>$5,496.47</SummaryValue>
-            </div>
-          </SummaryContainer>
-
-          <ScoreContainer>
-            <ShieldImage src={shieldImage} alt="" />
-
-            <div className="flex flex-col flex-1">
-              <Field>Humanity Score</Field>
-              <div className="flex items-center gap-[6px]">
-                <span>
-                  {score !== null ? (
-                    <Score>{score}</Score>
-                  ) : loading ? (
-                    <p>Loading...</p>
-                  ) : error ? (
-                    error
-                  ) : null}
-                </span>
-                <Verified />
+      {/* main */}
+      <main className="mt-[100px] flex flex-col w-full max-w-[1000px] mx-auto">
+        {/* top */}
+        <div className="flex w-full gap-4">
+          <div className="flex flex-col flex-1 gap-4">
+            <SummaryContainer>
+              <div className="flex flex-col">
+                <SummaryField>Wallet</SummaryField>
+                <SummaryValue>0x7777...10c4</SummaryValue>
               </div>
-              <Source>Powered by Gitcoin Passport</Source>
-            </div>
-          </ScoreContainer>
+
+              <div className="flex flex-col">
+                <SummaryField>Total Value</SummaryField>
+                <SummaryValue>$5,496.47</SummaryValue>
+              </div>
+            </SummaryContainer>
+
+            <ScoreContainer>
+              <ShieldImage src={shieldImage} alt="" />
+
+              <div className="flex flex-col flex-1">
+                <Field>Humanity Score</Field>
+                <div className="flex items-center gap-[6px]">
+                  <span>
+                    {score !== null ? (
+                      <Score>{score}</Score>
+                    ) : loading ? (
+                      <p>Loading...</p>
+                    ) : error ? (
+                      error
+                    ) : null}
+                  </span>
+                  <Verified />
+                </div>
+                <Source>Powered by Gitcoin Passport</Source>
+              </div>
+            </ScoreContainer>
+          </div>
+
+          <div className="flex flex-col flex-1">
+            <StakeContainer>
+              <GovernanceTitle>Governance</GovernanceTitle>
+              <div className="absolute top-0 left-0 right-0 h-[130px] flex justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="200"
+                  height="130"
+                  viewBox="0 0 200 130"
+                  fill="none"
+                >
+                  <circle
+                    cx="100"
+                    cy="30"
+                    r="99.5"
+                    stroke="#C9AAFF"
+                    stroke-opacity="0.21"
+                  />
+                </svg>
+              </div>
+
+              <BalanceItem
+                {...sKII}
+                // FIXME:
+                balance={BigInt(211.05 * 10 ** 6)}
+                valuation={100.01}
+              />
+              <StakeCard>
+                <StakeImageWrapper>
+                  <StakeImage src={kiiToSkiiImage} alt="" />
+                  <AbsoluteStakeImage src={kiiToSkiiImage} alt="" />
+                </StakeImageWrapper>
+                <StakeTitle>Stake KII and receive sKII</StakeTitle>
+                <div className="mt-[10px] flex items-center w-full gap-[6px]">
+                  <Button className="flex-1 primary">Stake</Button>
+                  <Button className="flex-1">Unstake</Button>
+                </div>
+              </StakeCard>
+            </StakeContainer>
+          </div>
         </div>
 
-        <div className="flex flex-col flex-1">
-          <StakeContainer>
-            <GovernanceTitle>Governance</GovernanceTitle>
-            <div className="absolute top-0 left-0 right-0 h-[130px] flex justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="200"
-                height="130"
-                viewBox="0 0 200 130"
-                fill="none"
-              >
-                <circle
-                  cx="100"
-                  cy="30"
-                  r="99.5"
-                  stroke="#C9AAFF"
-                  stroke-opacity="0.21"
-                />
-              </svg>
-            </div>
-
-            <BalanceItem
-              {...sKII}
-              // FIXME:
-              balance={BigInt(211.05 * 10 ** 6)}
-              valuation={100.01}
-            />
-            <StakeCard>
-              <StakeImageWrapper>
-                <StakeImage src={kiiToSkiiImage} alt="" />
-                <AbsoluteStakeImage src={kiiToSkiiImage} alt="" />
-              </StakeImageWrapper>
-              <StakeTitle>Stake KII and receive sKII</StakeTitle>
-              <div className="mt-[10px] flex items-center w-full gap-[6px]">
-                <Button className="flex-1 primary">Stake</Button>
-                <Button className="flex-1">Unstake</Button>
-              </div>
-            </StakeCard>
-          </StakeContainer>
+        {/* bottom */}
+        <div className="flex flex-col w-full gap-4">
+          <BalancesTitle>Balances</BalancesTitle>
+          <div className="flex gap-4">
+            <Card>
+              <CardTitle>Assets</CardTitle>
+              <BalanceList></BalanceList>
+            </Card>
+            <DefiCardList>
+              <Card>
+                <CardTitle>Providing Liquidity</CardTitle>
+                <BalanceList></BalanceList>
+              </Card>
+              <Card>
+                <CardTitle>Launchpad</CardTitle>
+                <BalanceList></BalanceList>
+              </Card>
+            </DefiCardList>
+          </div>
         </div>
-      </div>
+      </main>
 
       <style global jsx>{`
         html {
@@ -312,4 +337,43 @@ const GovernanceTitle = styled.h2`
   font-size: 24px;
   font-weight: 500;
   letter-spacing: -0.96px;
+`;
+
+const BalancesTitle = styled.h2`
+  color: #1d004f;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.96px;
+`;
+
+const Card = styled.div`
+  padding: 12px;
+
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  border-radius: 16px;
+  border: 1px solid #e0e0e0;
+`;
+
+const DefiCardList = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+const CardTitle = styled.h3`
+  color: #1d004f;
+  font-size: 24px;
+  line-height: normal;
+  letter-spacing: -0.96px;
+`;
+
+const BalanceList = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 `;
