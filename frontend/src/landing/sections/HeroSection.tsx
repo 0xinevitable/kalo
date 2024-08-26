@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import heroBackground from '@/assets/hero-background.jpg';
 import { JostFont } from '@/styles/fonts';
@@ -22,7 +23,9 @@ export const HeroSection: React.FC = () => {
             Infra Hub
             <br /> for KiiChain
           </Title>
-          <Button>Start Now</Button>
+          <Link href="/home">
+            <Button>Start Now</Button>
+          </Link>
         </HeroContent>
       </Container>
     </Wrapper>
@@ -131,6 +134,7 @@ const BrandLogo = styled.img`
 `;
 const Title = styled.h1`
   margin-top: 40px;
+  margin-bottom: 20px;
 
   color: #1d004f;
   text-shadow: 0px 12px 49px #d4bcff;
@@ -143,7 +147,6 @@ const Title = styled.h1`
   text-transform: uppercase;
 `;
 const Button = styled.button`
-  margin-top: 20px;
   width: fit-content;
   padding: 8px 12px;
 
