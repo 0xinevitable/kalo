@@ -1,6 +1,5 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Notification } from '@/components/Notification';
 
