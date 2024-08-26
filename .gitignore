@@ -33,3 +33,8 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# hardhat
+artifacts
+cache
+typechain-types
