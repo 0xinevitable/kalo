@@ -69,19 +69,30 @@ contract ExponentialBondingCurveERC20 is ERC20, Ownable {
     }
 
     function currentPrice(uint256 supply) public pure returns (uint256) {
-        uint256 marketCap = (supply * PRICE_PRECISION) / TOKEN_STEP;
-        uint256 exponent = (marketCap * EXPONENT_FACTOR) / PRICE_PRECISION;
-        return (BASE_PRICE * exp(exponent)) / PRICE_PRECISION;
+        if (supply == 0) return BASE_PRICE;
+        uint256 x = (supply * EXPONENT_FACTOR) / TOKEN_STEP;
+        return (BASE_PRICE * exp(x)) / PRICE_PRECISION;
     }
 
     function exp(uint256 x) internal pure returns (uint256) {
-        // This is a simplified exponential function approximation
-        // Accurate for small values of x
-        return
-            PRICE_PRECISION +
-            x +
-            ((x * x) / (2 * PRICE_PRECISION)) +
-            ((x * x * x) / (6 * PRICE_PRECISION * PRICE_PRECISION));
+        unchecked {
+            if (x == 0) return PRICE_PRECISION;
+
+            uint256 result = PRICE_PRECISION;
+            uint256 xi = x;
+            uint256 term = PRICE_PRECISION;
+
+            for (uint256 i = 1; i <= 8; i++) {
+                term = (term * xi) / (i * PRICE_PRECISION);
+                result += term;
+
+                if (term < PRICE_PRECISION / 100) {
+                    break;
+                }
+            }
+
+            return result;
+        }
     }
 
     function _update(
