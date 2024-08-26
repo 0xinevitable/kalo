@@ -364,6 +364,8 @@ const GovernanceTokenCard = styled.div`
   }
 
   & .balance {
+    margin-top: 4px;
+
     color: #a09ca8;
     font-size: 14px;
     font-weight: 500;
