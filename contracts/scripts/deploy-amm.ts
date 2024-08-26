@@ -1,6 +1,13 @@
 import axios from 'axios';
-import { BigNumber, Contract, ContractFactory } from 'ethers';
+import { formatUnits, parseUnits } from 'ethers';
 import { ethers } from 'hardhat';
+
+import {
+  MockERC20__factory,
+  UniswapV2Factory__factory,
+  UniswapV2Router02__factory,
+  WETH9__factory,
+} from '../typechain-types';
 
 interface TokenInfo {
   symbol: string;
@@ -21,23 +28,24 @@ async function getExchangeRates(): Promise<{ [key: string]: number }> {
   };
 }
 
-function calculateLiquidityAmount(price: number, decimals: number): BigNumber {
+function calculateLiquidityAmount(price: number, decimals: number): bigint {
   // Base liquidity in USD
   const baseLiquidityUSD = 10_000_000; // $10 million
   const tokenAmount = baseLiquidityUSD / price;
-  return ethers.utils.parseUnits(tokenAmount.toFixed(decimals), decimals);
+  return parseUnits(tokenAmount.toFixed(decimals), decimals);
 }
 
 async function main() {
   const [deployer] = await ethers.getSigners();
-  console.log('Deploying contracts with the account:', deployer.address);
+  console.log(
+    'Deploying contracts with the account:',
+    await deployer.getAddress(),
+  );
 
   const exchangeRates = await getExchangeRates();
   console.log('Fetched exchange rates:', exchangeRates);
 
   // Deploy mock tokens
-  const MockERC20: ContractFactory =
-    await ethers.getContractFactory('MockERC20');
   const tokens: TokenInfo[] = [
     { symbol: 'BTC', address: '', decimals: 8, price: exchangeRates.BTC },
     { symbol: 'ETH', address: '', decimals: 18, price: exchangeRates.ETH },
@@ -46,40 +54,42 @@ async function main() {
   ];
 
   for (const token of tokens) {
-    const mockToken: Contract = await MockERC20.deploy(
+    const mockToken = await new MockERC20__factory(deployer).deploy(
       `Mock ${token.symbol}`,
       `m${token.symbol}`,
       token.decimals,
+      await deployer.getAddress(),
     );
-    await mockToken.deployed();
-    token.address = mockToken.address;
-    console.log(`Mock ${token.symbol} deployed to:`, mockToken.address);
+    await mockToken.waitForDeployment();
+    token.address = await mockToken.getAddress();
+    console.log(`Mock ${token.symbol} deployed to:`, token.address);
   }
 
   // Deploy UniswapV2Factory
-  const UniswapV2Factory: ContractFactory =
-    await ethers.getContractFactory('UniswapV2Factory');
-  const uniswapFactory: Contract = await UniswapV2Factory.deploy(
-    deployer.address,
+  const uniswapFactory = await new UniswapV2Factory__factory(deployer).deploy(
+    await deployer.getAddress(),
   );
-  await uniswapFactory.deployed();
-  console.log('UniswapV2Factory deployed to:', uniswapFactory.address);
+  await uniswapFactory.waitForDeployment();
+  console.log(
+    'UniswapV2Factory deployed to:',
+    await uniswapFactory.getAddress(),
+  );
 
   // Deploy WETH
-  const WETH: ContractFactory = await ethers.getContractFactory('WETH9');
-  const weth: Contract = await WETH.deploy();
-  await weth.deployed();
-  console.log('WETH deployed to:', weth.address);
+  const weth = await new WETH9__factory(deployer).deploy();
+  await weth.waitForDeployment();
+  console.log('WETH deployed to:', await weth.getAddress());
 
   // Deploy UniswapV2Router02
-  const UniswapV2Router02: ContractFactory =
-    await ethers.getContractFactory('UniswapV2Router02');
-  const uniswapRouter: Contract = await UniswapV2Router02.deploy(
-    uniswapFactory.address,
-    weth.address,
+  const uniswapRouter = await new UniswapV2Router02__factory(deployer).deploy(
+    await uniswapFactory.getAddress(),
+    await weth.getAddress(),
   );
-  await uniswapRouter.deployed();
-  console.log('UniswapV2Router02 deployed to:', uniswapRouter.address);
+  await uniswapRouter.waitForDeployment();
+  console.log(
+    'UniswapV2Router02 deployed to:',
+    await uniswapRouter.getAddress(),
+  );
 
   // Create pairs and add liquidity
   for (let i = 0; i < tokens.length; i++) {
@@ -96,22 +106,16 @@ async function main() {
         tokens[j].decimals,
       );
 
-      const token1: Contract = await ethers.getContractAt(
-        'MockERC20',
-        tokens[i].address,
-      );
-      const token2: Contract = await ethers.getContractAt(
-        'MockERC20',
-        tokens[j].address,
-      );
+      const token1 = MockERC20__factory.connect(tokens[i].address, deployer);
+      const token2 = MockERC20__factory.connect(tokens[j].address, deployer);
 
       // Mint tokens to the deployer
-      await token1.mint(deployer.address, token1Amount);
-      await token2.mint(deployer.address, token2Amount);
+      await token1.mint(await deployer.getAddress(), token1Amount);
+      await token2.mint(await deployer.getAddress(), token2Amount);
 
       // Approve router to spend tokens
-      await token1.approve(uniswapRouter.address, token1Amount);
-      await token2.approve(uniswapRouter.address, token2Amount);
+      await token1.approve(await uniswapRouter.getAddress(), token1Amount);
+      await token2.approve(await uniswapRouter.getAddress(), token2Amount);
 
       // Add liquidity
       await uniswapRouter.addLiquidity(
@@ -119,20 +123,20 @@ async function main() {
         tokens[j].address,
         token1Amount,
         token2Amount,
-        0,
-        0,
-        deployer.address,
-        Math.floor(Date.now() / 1000) + 60 * 10, // 10 minutes from now
+        0n,
+        0n,
+        await deployer.getAddress(),
+        BigInt(Math.floor(Date.now() / 1000) + 60 * 10), // 10 minutes from now
       );
 
       console.log(
         `Added liquidity for ${tokens[i].symbol} - ${tokens[j].symbol} pair`,
       );
       console.log(
-        `  ${tokens[i].symbol}: ${ethers.utils.formatUnits(token1Amount, tokens[i].decimals)}`,
+        `  ${tokens[i].symbol}: ${formatUnits(token1Amount, tokens[i].decimals)}`,
       );
       console.log(
-        `  ${tokens[j].symbol}: ${ethers.utils.formatUnits(token2Amount, tokens[j].decimals)}`,
+        `  ${tokens[j].symbol}: ${formatUnits(token2Amount, tokens[j].decimals)}`,
       );
     }
   }

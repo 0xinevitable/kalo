@@ -1,5 +1,5 @@
 // import '@nomiclabs/hardhat-etherscan';
-import '@nomiclabs/hardhat-waffle';
+import '@nomicfoundation/hardhat-toolbox';
 import '@typechain/hardhat';
 import * as dotenv from 'dotenv';
 import 'hardhat-contract-sizer';
@@ -76,6 +76,7 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY!],
     },
   },
+  // @ts-ignore
   gasReporter: {
     enabled: true,
     currency: 'USD',
