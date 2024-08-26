@@ -5,10 +5,10 @@ import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract ExponentialBondingCurveERC20 is ERC20, Ownable {
-    uint256 public constant BASE_PRICE = 601500000000000000; // 0.6015 ETH
-    uint256 public constant EXPONENT_FACTOR = 36060000000000; // 0.00003606
-    uint256 public constant PRICE_PRECISION = 1e18;
-    uint256 public constant TOKEN_STEP = 10000000 * 1e18; // 10M tokens with 18 decimals
+    uint256 public constant BASE_PRICE = 0.00001 ether;
+    uint256 public constant EXPONENT_FACTOR = 0.0003606 ether;
+    uint256 public constant PRICE_PRECISION = 1 ether;
+    uint256 public constant TOKEN_STEP = 500 ether;
 
     uint256 public feePercentage;
     address public feeCollector;
@@ -77,7 +77,11 @@ contract ExponentialBondingCurveERC20 is ERC20, Ownable {
     function exp(uint256 x) internal pure returns (uint256) {
         // This is a simplified exponential function approximation
         // Accurate for small values of x
-        return PRICE_PRECISION + x + ((x * x) / (2 * PRICE_PRECISION));
+        return
+            PRICE_PRECISION +
+            x +
+            ((x * x) / (2 * PRICE_PRECISION)) +
+            ((x * x * x) / (6 * PRICE_PRECISION * PRICE_PRECISION));
     }
 
     function _update(
