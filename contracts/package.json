@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "author": "Junho Yeo <i@junho.io>",
-  "scripts": {
-    "start": "tsx ./scripts/poc.ts"
-  },
+  "scripts": {},
   "dependencies": {
     "viem": "^2.19.7"
   },

@@ -8,6 +8,8 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
+import { BANK_ABI, SWAP_ABI } from './precompiles';
+
 dotenv.config();
 
 const PRECOMPILES = {
@@ -19,92 +21,6 @@ const PRECOMPILES = {
   Swap: '0xF948f57612E05320A6636a965cA4fbaed3147A0f',
 } as const;
 console.log(PRECOMPILES);
-
-const BANK_ABIs = [
-  {
-    inputs: [
-      { internalType: 'address', name: 'toAddress', type: 'address' },
-      {
-        components: [
-          { internalType: 'uint256', name: 'amount', type: 'uint256' },
-          { internalType: 'string', name: 'denom', type: 'string' },
-        ],
-        internalType: 'struct Cosmos.Coin[]',
-        name: 'amount',
-        type: 'tuple[]',
-      },
-    ],
-    name: 'send',
-    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'address', name: 'accountAddress', type: 'address' },
-    ],
-    name: 'getAllSpendableBalances',
-    outputs: [
-      {
-        components: [
-          { internalType: 'uint256', name: 'amount', type: 'uint256' },
-          { internalType: 'string', name: 'denom', type: 'string' },
-        ],
-        internalType: 'struct Cosmos.Coin[]',
-        name: '',
-        type: 'tuple[]',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'address', name: 'accountAddress', type: 'address' },
-      { internalType: 'string', name: 'denom', type: 'string' },
-    ],
-    name: 'getBalance',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'getAllSupply',
-    outputs: [
-      {
-        components: [
-          { internalType: 'uint256', name: 'amount', type: 'uint256' },
-          { internalType: 'string', name: 'denom', type: 'string' },
-        ],
-        internalType: 'struct Cosmos.Coin[]',
-        name: '',
-        type: 'tuple[]',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'address', name: 'accountAddress', type: 'address' },
-    ],
-    name: 'getAllBalances',
-    outputs: [
-      {
-        components: [
-          { internalType: 'uint256', name: 'amount', type: 'uint256' },
-          { internalType: 'string', name: 'denom', type: 'string' },
-        ],
-        internalType: 'struct Cosmos.Coin[]',
-        name: '',
-        type: 'tuple[]',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
 
 const kiichain = defineChain({
   // https://docs.kiiglobal.io/docs/build-on-kiichain/developer-tools/deploy-a-smart-contract#chain-information
@@ -127,23 +43,6 @@ const client = createPublicClient({
   transport: http(),
 });
 
-const SWAP_ABIs = [
-  {
-    inputs: [],
-    name: 'buySkii',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'uint256', name: 'amount', type: 'uint256' }],
-    name: 'sellSkii',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-] as const;
-
 const main = async () => {
   const account = privateKeyToAccount(
     (process.env.PRIVATE_KEY || '') as `0x${string}`,
@@ -159,7 +58,7 @@ const main = async () => {
   // Query available denoms in the Swap precompile
   const availableDenomsPre = await client.readContract({
     address: PRECOMPILES.Bank,
-    abi: BANK_ABIs,
+    abi: BANK_ABI,
     functionName: 'getAllSpendableBalances',
     args: [PRECOMPILES.Swap],
   });
@@ -174,7 +73,7 @@ const main = async () => {
   // Get tKII balance
   const tkiiBalance = await client.readContract({
     address: PRECOMPILES.Bank,
-    abi: BANK_ABIs,
+    abi: BANK_ABI,
     functionName: 'getBalance',
     args: [account.address, 'tkii'],
   });
@@ -184,7 +83,7 @@ const main = async () => {
   const kiiToBuy = parseEther('1'); // Buy 1 KII worth of tKII
   const buyHash = await walletClient.writeContract({
     address: PRECOMPILES.Swap,
-    abi: SWAP_ABIs,
+    abi: SWAP_ABI,
     functionName: 'buySkii',
     value: kiiToBuy,
   });
@@ -202,7 +101,7 @@ const main = async () => {
 
   const newTkiiBalance = await client.readContract({
     address: PRECOMPILES.Bank,
-    abi: BANK_ABIs,
+    abi: BANK_ABI,
     functionName: 'getBalance',
     args: [account.address, 'tkii'],
   });
@@ -212,7 +111,7 @@ const main = async () => {
   const tkiiToSell = 1000000n; // Sell 1 tKII
   const sellHash = await walletClient.writeContract({
     address: PRECOMPILES.Swap,
-    abi: SWAP_ABIs,
+    abi: SWAP_ABI,
     functionName: 'sellSkii',
     args: [tkiiToSell],
   });
@@ -232,7 +131,7 @@ const main = async () => {
 
   const finalTkiiBalance = await client.readContract({
     address: PRECOMPILES.Bank,
-    abi: BANK_ABIs,
+    abi: BANK_ABI,
     functionName: 'getBalance',
     args: [account.address, 'tkii'],
   });
@@ -241,7 +140,7 @@ const main = async () => {
   // Query available denoms in the Swap precompile
   const availableDenomsPost = await client.readContract({
     address: PRECOMPILES.Bank,
-    abi: BANK_ABIs,
+    abi: BANK_ABI,
     functionName: 'getAllSpendableBalances',
     args: [PRECOMPILES.Swap],
   });
