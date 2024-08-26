@@ -12,16 +12,19 @@ contract ExponentialBondingCurveERC20 is ERC20, Ownable {
 
     uint256 public feePercentage;
     address public feeCollector;
+    address public factory;
 
     constructor(
         string memory name,
         string memory symbol,
         uint256 _feePercentage,
         address _feeCollector,
-        address initialOwner
+        address initialOwner,
+        address _factory
     ) ERC20(name, symbol) Ownable(initialOwner) {
         feePercentage = _feePercentage;
         feeCollector = _feeCollector;
+        factory = _factory;
     }
 
     function buy() external payable {
@@ -29,8 +32,8 @@ contract ExponentialBondingCurveERC20 is ERC20, Ownable {
         uint256 ethForTokens = msg.value - fee;
         uint256 tokensToBuy = calculatePurchaseReturn(ethForTokens);
         require(tokensToBuy > 0, 'Insufficient ETH sent');
-        _mint(msg.sender, tokensToBuy);
         payable(feeCollector).transfer(fee);
+        _mint(msg.sender, tokensToBuy);
     }
 
     function sell(uint256 tokenAmount) external {
@@ -41,9 +44,9 @@ contract ExponentialBondingCurveERC20 is ERC20, Ownable {
         uint256 fee = (ethToReturn * feePercentage) / 10000;
         uint256 ethAfterFee = ethToReturn - fee;
 
-        _burn(msg.sender, tokenAmount);
         payable(msg.sender).transfer(ethAfterFee);
         payable(feeCollector).transfer(fee);
+        _burn(msg.sender, tokenAmount);
     }
 
     function calculatePurchaseReturn(
@@ -77,16 +80,21 @@ contract ExponentialBondingCurveERC20 is ERC20, Ownable {
         return PRICE_PRECISION + x + ((x * x) / (2 * PRICE_PRECISION));
     }
 
-    function _transfer(
-        address sender,
-        address recipient,
+    function _update(
+        address from,
+        address to,
         uint256 amount
     ) internal override {
         require(
-            sender == address(this) || recipient == address(this),
-            'Transfers are only allowed to or from this contract'
+            from == address(this) ||
+                to == address(this) ||
+                from == factory ||
+                to == factory ||
+                from == address(0) ||
+                to == address(0),
+            'Transfers are only allowed to or from bonding curve related contracts'
         );
-        super._transfer(sender, recipient, amount);
+        super._update(from, to, amount);
     }
 
     function updateFeePercentage(uint256 _feePercentage) external onlyOwner {

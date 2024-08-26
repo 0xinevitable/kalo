@@ -21,7 +21,8 @@ contract ExponentialBondingCurveFactory {
                 symbol,
                 feePercentage,
                 feeCollector,
-                msg.sender
+                msg.sender,
+                address(this)
             );
 
         emit BondingCurveCreated(address(newBondingCurve), name, symbol);
