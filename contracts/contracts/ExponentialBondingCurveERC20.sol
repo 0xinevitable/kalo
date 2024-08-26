@@ -8,7 +8,7 @@ contract ExponentialBondingCurveERC20 is ERC20, Ownable {
     uint256 public constant BASE_PRICE = 0.00001 ether;
     uint256 public constant EXPONENT_FACTOR = 0.0003606 ether;
     uint256 public constant PRICE_PRECISION = 1 ether;
-    uint256 public constant TOKEN_STEP = 500 ether;
+    uint256 public constant TOKEN_STEP = 100 ether;
 
     uint256 public feePercentage;
     address public feeCollector;
@@ -46,10 +46,14 @@ contract ExponentialBondingCurveERC20 is ERC20, Ownable {
         uint256 fee = (ethToReturn * feePercentage) / 10000;
         uint256 ethAfterFee = ethToReturn - fee;
 
-        require(
-            address(this).balance >= ethToReturn,
-            'Insufficient liquidity in contract'
-        );
+        uint256 contractBalance = address(this).balance;
+        if (contractBalance < ethToReturn) {
+            // Partial sell if there's insufficient liquidity
+            ethToReturn = contractBalance;
+            fee = (ethToReturn * feePercentage) / 10000;
+            ethAfterFee = ethToReturn - fee;
+            tokenAmount = calculatePurchaseReturn(ethAfterFee);
+        }
 
         payable(msg.sender).transfer(ethAfterFee);
         payable(feeCollector).transfer(fee);
