@@ -62,8 +62,8 @@ async function main() {
 
   for (const token of tokens) {
     const mockToken = await new MockERC20__factory(deployer).deploy(
-      `Mock ${token.symbol}`,
-      `m${token.symbol}`,
+      token.symbol,
+      token.symbol,
       token.decimals,
       await deployer.getAddress(),
     );
