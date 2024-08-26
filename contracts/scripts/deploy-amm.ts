@@ -5,16 +5,23 @@ import { ethers } from 'hardhat';
 import {
   MockERC20__factory,
   UniswapV2Factory__factory,
+  UniswapV2Pair__factory,
   UniswapV2Router02__factory,
   WETH9__factory,
 } from '../typechain-types';
 
-interface TokenInfo {
+type TokenInfo = {
   symbol: string;
   address: string;
   decimals: number;
   price: number;
-}
+};
+
+type PairInfo = {
+  name: string;
+  token0: string;
+  token1: string;
+};
 
 async function getExchangeRates(): Promise<{ [key: string]: number }> {
   const response = await axios.get(
@@ -92,10 +99,29 @@ async function main() {
   );
 
   // Create pairs and add liquidity
+  const pairInfoMap: { [pairAddress: string]: PairInfo } = {};
+
   for (let i = 0; i < tokens.length; i++) {
     for (let j = i + 1; j < tokens.length; j++) {
-      await uniswapFactory.createPair(tokens[i].address, tokens[j].address);
+      await (
+        await uniswapFactory.createPair(tokens[i].address, tokens[j].address)
+      ).wait();
       console.log(`Created pair: ${tokens[i].symbol} - ${tokens[j].symbol}`);
+
+      const pairAddress = await uniswapFactory.getPair(
+        tokens[i].address,
+        tokens[j].address,
+      );
+      const pair = UniswapV2Pair__factory.connect(pairAddress, deployer);
+      const pairName = await pair.name();
+      const token0Address = await pair.token0();
+      const token1Address = await pair.token1();
+
+      pairInfoMap[pairAddress] = {
+        name: pairName,
+        token0: token0Address,
+        token1: token1Address,
+      };
 
       const token1Amount = calculateLiquidityAmount(
         tokens[i].price,
@@ -142,6 +168,7 @@ async function main() {
   }
 
   console.log('Deployment and liquidity addition completed successfully!');
+  console.log(JSON.stringify(pairInfoMap));
 }
 
 main()

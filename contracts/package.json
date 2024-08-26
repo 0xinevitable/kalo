@@ -25,6 +25,7 @@
     "solidity-coverage": "^0.8.12",
     "ts-node": "^10.9.2",
     "tsx": "^4.17.0",
+    "typechain": "^8.3.2",
     "typescript": "^5.5.4",
     "viem": "^2.19.7"
   }
