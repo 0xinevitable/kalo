@@ -2,5 +2,11 @@
 pragma solidity >=0.8.20 <0.9.0;
 
 interface IUniswapV2Migrator {
-    function migrate(address token, uint amountTokenMin, uint amountETHMin, address to, uint deadline) external;
+    function migrate(
+        address token,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to,
+        uint deadline
+    ) external;
 }
