@@ -4,6 +4,7 @@ import React from 'react';
 
 import kiiToSkiiImage from '@/assets/kii-to-skii.png';
 import shieldImage from '@/assets/shield.png';
+import kiiImage from '@/assets/skii.png';
 import { Notification } from '@/components/Notification';
 import { usePassportScore } from '@/hooks/usePassportScore';
 
@@ -26,7 +27,7 @@ const HomePage = () => {
     <>
       <Notification />
 
-      <div className="mt-[100px] flex w-full gap-4">
+      <div className="mt-[100px] flex w-full max-w-[1000px] gap-4 mx-auto">
         <div className="flex flex-col flex-1 gap-4">
           <SummaryContainer>
             <div className="flex flex-col">
@@ -64,7 +65,49 @@ const HomePage = () => {
 
         <div className="flex flex-col flex-1">
           <StakeContainer>
-            <GovernanceTokenCard></GovernanceTokenCard>
+            <GovernanceTitle>Governance</GovernanceTitle>
+            <div className="absolute top-0 left-0 right-0 h-[130px] flex justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="200"
+                height="130"
+                viewBox="0 0 200 130"
+                fill="none"
+              >
+                <circle
+                  cx="100"
+                  cy="30"
+                  r="99.5"
+                  stroke="#C9AAFF"
+                  stroke-opacity="0.21"
+                />
+              </svg>
+            </div>
+
+            <GovernanceTokenCard>
+              <div className="w-[36px] h-[36px] relative">
+                <Image
+                  src={kiiImage}
+                  alt=""
+                  width={72}
+                  height={72}
+                  style={{ width: 36, height: 36 }}
+                />
+                <Image
+                  className="absolute left-0 right-0 top-2"
+                  src={kiiImage}
+                  alt=""
+                  width={72}
+                  height={72}
+                  style={{ width: 36, height: 36, filter: 'blur(8px)' }}
+                />
+              </div>
+              <div className="flex flex-col flex-1">
+                <span className="name">sKII</span>
+                <span className="balance">243.05 sKII</span>
+              </div>
+              <Valuation>$100</Valuation>
+            </GovernanceTokenCard>
             <StakeCard>
               <StakeImageWrapper>
                 <StakeImage src={kiiToSkiiImage} alt="" />
@@ -72,7 +115,7 @@ const HomePage = () => {
               </StakeImageWrapper>
               <StakeTitle>Stake KII and receive sKII</StakeTitle>
               <div className="mt-[10px] flex items-center w-full gap-[6px]">
-                <Button className="flex-1">Stake</Button>
+                <Button className="flex-1 primary">Stake</Button>
                 <Button className="flex-1">Unstake</Button>
               </div>
             </StakeCard>
@@ -195,6 +238,7 @@ const Source = styled.span`
 
 const StakeContainer = styled.div`
   width: 100%;
+  position: relative;
 
   display: flex;
   padding: 12px;
@@ -266,11 +310,34 @@ const Button = styled.button`
   align-items: center;
 
   border-radius: 12px;
-  border: 0px solid #adadad;
   background: #ddd;
+  color: rgba(126, 126, 126, 0.88);
+
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 105%; /* 16.8px */
+  letter-spacing: -0.65px;
+
+  &.primary {
+    background: #5d00ff;
+    color: #ffffff;
+  }
 `;
 
+const GovernanceTitle = styled.h2`
+  color: #1d004f;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.96px;
+`;
 const GovernanceTokenCard = styled.div`
+  width: 100%;
+  padding: 8px 10px 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+
   background: #fff;
   box-shadow:
     0px -4px 8px 0px rgba(93, 0, 255, 0.11),
@@ -279,7 +346,7 @@ const GovernanceTokenCard = styled.div`
   border-radius: 12px;
   border: 1px solid transparent;
   background:
-    linear-gradient(#f1eef4, #f1eef4) padding-box,
+    linear-gradient(white, white) padding-box,
     linear-gradient(
         144deg,
         rgba(174, 1, 227, 1) 20.77%,
@@ -287,4 +354,27 @@ const GovernanceTokenCard = styled.div`
         rgba(0, 117, 255, 1) 79.52%
       )
       border-box;
+
+  & .name {
+    color: #1d004f;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.8px;
+    line-height: 100%;
+  }
+
+  & .balance {
+    color: #a09ca8;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.56px;
+    line-height: 100%;
+  }
+`;
+
+const Valuation = styled.span`
+  color: #000;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.64px;
 `;
