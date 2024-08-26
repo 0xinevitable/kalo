@@ -41,8 +41,15 @@ contract ExponentialBondingCurveERC20 is ERC20, Ownable {
         require(balanceOf(msg.sender) >= tokenAmount, 'Insufficient balance');
 
         uint256 ethToReturn = calculateSaleReturn(tokenAmount);
+        require(ethToReturn > 0, 'Sale would result in zero ETH');
+
         uint256 fee = (ethToReturn * feePercentage) / 10000;
         uint256 ethAfterFee = ethToReturn - fee;
+
+        require(
+            address(this).balance >= ethToReturn,
+            'Insufficient liquidity in contract'
+        );
 
         payable(msg.sender).transfer(ethAfterFee);
         payable(feeCollector).transfer(fee);

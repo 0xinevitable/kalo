@@ -8,7 +8,7 @@ import {
 import { BondingCurveCreatedEvent } from '../typechain-types/contracts/ExponentialBondingCurveFactory';
 
 async function main() {
-  const [deployer, user1, user2] = await ethers.getSigners();
+  const [deployer, user1, user2, user3, user4] = await ethers.getSigners();
 
   console.log(
     'Deploying contracts with the account:',
@@ -55,7 +55,6 @@ async function main() {
   );
 
   const logCurrentPrice = async () => {
-    // Print current token price
     const supply = await token.totalSupply();
     const currentPrice = await token.currentPrice(supply);
     console.log(
@@ -63,59 +62,68 @@ async function main() {
       ethers.formatUnits(currentPrice, 18),
       'ETH',
     );
+    console.log('Total supply:', ethers.formatUnits(supply, 18));
     console.log('==========================');
   };
 
-  // Perform some trades
+  const buyTokens = async (user: any, amount: string) => {
+    const buyAmount = ethers.parseEther(amount);
+    await token.connect(user).buy({ value: buyAmount });
+    const balance = await token.balanceOf(user.address);
+    console.log(`${user.address} bought tokens with ${amount} ETH`);
+    console.log(
+      `${user.address} token balance:`,
+      ethers.formatUnits(balance, 18),
+    );
+    await logCurrentPrice();
+  };
+
+  const sellTokens = async (user: any, percentage: number) => {
+    const balance = await token.balanceOf(user.address);
+    const sellAmount = (balance * BigInt(percentage)) / 100n;
+    await token.connect(user).sell(sellAmount);
+    const newBalance = await token.balanceOf(user.address);
+    console.log(`${user.address} sold ${percentage}% of their tokens`);
+    console.log(
+      `${user.address} new token balance:`,
+      ethers.formatUnits(newBalance, 18),
+    );
+    await logCurrentPrice();
+  };
+
+  // Perform trades
   console.log('Performing trades...');
 
-  let user1Balance = 0n;
-  {
-    await logCurrentPrice();
+  await logCurrentPrice();
 
-    // User1 buys tokens
-    const buyAmount1 = ethers.parseEther('1'); // Buy with 1 ETH
-    await token.connect(user1).buy({ value: buyAmount1 });
-    console.log('User1 bought tokens with 1 ETH');
+  // Initial buys
+  await buyTokens(user1, '1');
+  await buyTokens(user2, '0.5');
 
-    // Check User1 balance
-    user1Balance = await token.balanceOf(user1.address);
-    console.log('User1 token balance:', ethers.formatUnits(user1Balance, 18));
+  // Large buy
+  await buyTokens(user3, '10');
 
-    await logCurrentPrice();
-  }
+  // Small buy
+  await buyTokens(user4, '0.01');
 
-  {
-    await logCurrentPrice();
+  // Sells
+  await sellTokens(user1, 50);
+  await sellTokens(user3, 75);
 
-    // User2 buys tokens
-    const buyAmount2 = ethers.parseEther('0.5'); // Buy with 0.5 ETH
-    await token.connect(user2).buy({ value: buyAmount2 });
-    console.log('User2 bought tokens with 0.5 ETH');
+  // Buy after sell
+  await buyTokens(user2, '2');
 
-    // Check User2 balance
-    const user2Balance = await token.balanceOf(user2.address);
-    console.log('User2 token balance:', ethers.formatUnits(user2Balance, 18));
+  // Extreme cases
+  // Very large buy
+  await buyTokens(user4, '100');
 
-    await logCurrentPrice();
-  }
+  // Sell all
+  await sellTokens(user4, 100);
 
-  {
-    await logCurrentPrice();
-
-    // User1 sells half of their tokens
-    const sellAmount = user1Balance / 2n;
-    await token.connect(user1).sell(sellAmount);
-    console.log('User1 sold half of their tokens');
-
-    // Check User1 new balance
-    const user1NewBalance = await token.balanceOf(user1.address);
-    console.log(
-      'User1 new token balance:',
-      ethers.formatUnits(user1NewBalance, 18),
-    );
-
-    await logCurrentPrice();
+  // Multiple transactions
+  for (let i = 0; i < 5; i++) {
+    await buyTokens(user1, '0.1');
+    await sellTokens(user2, 10);
   }
 
   console.log('Deployment and trades completed successfully!');
