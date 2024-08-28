@@ -2,6 +2,7 @@
 import '@nomicfoundation/hardhat-toolbox';
 import '@typechain/hardhat';
 import * as dotenv from 'dotenv';
+import { formatUnits, parseUnits } from 'ethers';
 import 'hardhat-contract-sizer';
 import 'hardhat-gas-reporter';
 import { HardhatUserConfig, task } from 'hardhat/config';
@@ -69,6 +70,12 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
+      accounts: [
+        {
+          privateKey: process.env.PRIVATE_KEY!,
+          balance: parseUnits('1000000000', 18).toString(),
+        },
+      ],
     },
     sepolia: {
       chainId: 11155111,

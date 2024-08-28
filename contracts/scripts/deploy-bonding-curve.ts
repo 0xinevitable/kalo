@@ -126,8 +126,8 @@ async function main() {
     await sellTokens(user2, 10);
   }
 
-  for (let i = 0; i < 100; i++) {
-    await buyTokens(user2, '1');
+  for (let i = 0; i < 30000; i++) {
+    await buyTokens(user2, '2500');
   }
 
   console.log('Deployment and trades completed successfully!');
