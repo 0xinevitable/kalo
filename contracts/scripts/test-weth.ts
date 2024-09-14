@@ -30,8 +30,12 @@ const main = async () => {
   console.log('balance', balance.toString());
 
   // withdraw all balance
-  await (await weth.withdraw(balance)).wait();
+  const receipt = await (await weth.withdraw(balance)).wait();
   console.log('withdrawn', balance.toString());
+
+  // decode logs in receipt
+  const logs = receipt?.logs.map((log) => weth.interface.parseLog(log));
+  console.log(logs);
 
   // check supply
   console.log('supply', (await weth.totalSupply()).toString());

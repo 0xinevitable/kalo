@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0
 pragma solidity =0.7.6;
 
-import "@uniswap/v3-core/contracts/interfaces/IUniswapV3PoolDeployer.sol";
+import '@uniswap/v3-core/contracts/interfaces/IUniswapV3PoolDeployer.sol';
 
-import "./UniswapV3Pool.sol";
+import './UniswapV3Pool.sol';
 
 contract UniswapV3PoolDeployer is IUniswapV3PoolDeployer {
     struct Parameters {
@@ -38,7 +38,11 @@ contract UniswapV3PoolDeployer is IUniswapV3PoolDeployer {
             fee: fee,
             tickSpacing: tickSpacing
         });
-        pool = address(new UniswapV3Pool{ salt: keccak256(abi.encode(token0, token1, fee)) }());
+        pool = address(
+            new UniswapV3Pool{
+                salt: keccak256(abi.encode(token0, token1, fee))
+            }()
+        );
         delete parameters;
     }
 }
