@@ -28,6 +28,21 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
+        version: '0.7.6',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 2 ** 32 - 1,
+          },
+          metadata: {
+            // do not include the metadata hash, since this is machine dependent
+            // and we want all generated code to be deterministic
+            // https://docs.soliditylang.org/en/v0.7.6/metadata.html
+            bytecodeHash: 'none',
+          },
+        },
+      },
+      {
         version: '0.8.20',
         settings: {
           optimizer: {
