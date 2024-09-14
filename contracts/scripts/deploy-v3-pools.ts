@@ -1,6 +1,8 @@
+import { TICK_SPACINGS, TickMath, nearestUsableTick } from '@uniswap/v3-sdk';
 import axios from 'axios';
 import { Contract, parseUnits } from 'ethers';
 import hre, { ethers } from 'hardhat';
+import JSBI from 'jsbi';
 
 import {
   INonfungiblePositionManager,
@@ -32,11 +34,34 @@ type PoolInfo = {
   fee: number;
 };
 
-function encodePriceSqrt(reserve1: number, reserve0: number): bigint {
-  const numerator = BigInt(Math.floor(reserve1 * 1e18));
-  const denominator = BigInt(Math.floor(reserve0 * 1e18));
-  const ratioX192 = (numerator * (BigInt(1) << BigInt(192))) / denominator;
-  return BigInt(Math.floor(Math.sqrt(Number(ratioX192))));
+function encodePriceSqrt(
+  reserve1: number,
+  reserve0: number,
+  decimals1: number,
+  decimals0: number,
+): bigint {
+  // Adjust for decimals
+  const adjustedReserve1 = BigInt(
+    Math.floor(reserve1 * 10 ** (18 - decimals1)),
+  );
+  const adjustedReserve0 = BigInt(
+    Math.floor(reserve0 * 10 ** (18 - decimals0)),
+  );
+
+  const numerator = adjustedReserve1 * (BigInt(1) << BigInt(192));
+  const denominator = adjustedReserve0;
+
+  const ratioX192 = numerator / denominator;
+
+  // Calculate square root using BigInt
+  let y = ratioX192;
+  let z = (y + BigInt(1)) >> BigInt(1);
+  while (z < y) {
+    y = z;
+    z = (ratioX192 / z + z) >> BigInt(1);
+  }
+
+  return y;
 }
 
 async function getExchangeRates(): Promise<{ [key: string]: number }> {
@@ -94,12 +119,29 @@ async function addLiquidity(
       ? [amount0Desired, amount1Desired]
       : [amount1Desired, amount0Desired];
 
+  // Calculate the desired price based on the provided amounts
+  const desiredPrice = Number(amount1) / Number(amount0);
+
+  const desiredTick = TickMath.getTickAtSqrtRatio(
+    JSBI.BigInt(parseUnits(Math.sqrt(desiredPrice).toString(), 18).toString()),
+  );
+  const tick = nearestUsableTick(
+    desiredTick,
+    TICK_SPACINGS[fee as keyof typeof TICK_SPACINGS],
+  );
+
+  // Set a narrow range around the desired price (e.g., ±10 ticks)
+  const tickLower =
+    tick - 10 * TICK_SPACINGS[fee as keyof typeof TICK_SPACINGS];
+  const tickUpper =
+    tick + 10 * TICK_SPACINGS[fee as keyof typeof TICK_SPACINGS];
+
   const mintParams = {
     token0: tokenA,
     token1: tokenB,
     fee: fee,
-    tickLower: -887220, // Represents a price range of ±10%
-    tickUpper: 887220,
+    tickLower: tickLower,
+    tickUpper: tickUpper,
     amount0Desired: amount0,
     amount1Desired: amount1,
     amount0Min: 0,
@@ -177,11 +219,13 @@ async function main() {
   const poolInfo: PoolInfo[] = [];
 
   // Create BTC-ETH pool
-  const btcEthPrice = exchangeRates.BTC / exchangeRates.ETH;
-  console.log({ btcEthPrice });
+  // const btcEthPrice = exchangeRates.BTC / exchangeRates.ETH;
+  // console.log({ btcEthPrice });
   const btcEthSqrtPriceX96 = encodePriceSqrt(
     exchangeRates.BTC,
     exchangeRates.ETH,
+    8,
+    18,
   );
   const btcEthPoolAddress = await createPool(
     factory,
@@ -193,7 +237,8 @@ async function main() {
   poolInfo.push({
     name: 'BTC-ETH',
     address: btcEthPoolAddress,
-    price: btcEthPrice,
+    // price: btcEthPrice,
+    price: 0,
     fee: 500,
   });
 
@@ -203,6 +248,8 @@ async function main() {
   const usdtUsdcSqrtPriceX96 = encodePriceSqrt(
     exchangeRates.USDT,
     exchangeRates.USDC,
+    6,
+    6,
   );
   const usdtUsdcPoolAddress = await createPool(
     factory,
@@ -221,9 +268,18 @@ async function main() {
   // Add liquidity to BTC-ETH pool
   const btcToken = MockERC20__factory.connect(BTC_ADDRESS, deployer);
   const ethToken = MockERC20__factory.connect(ETH_ADDRESS, deployer);
-  const btcAmount = ethers.parseUnits('10', 8); // 10 BTC
-  const ethAmount = // use ratio of BTC and ETH to determine amount of ETH to add
-    BigInt((10 / btcEthPrice) * 10 ** 18);
+
+  const btcAmount = ethers.parseUnits('10', 8); // 10 BTC (8 decimals)
+
+  // 10 BTC에 해당하는 ETH 양 계산
+  const ethAmount = ethers.parseUnits(
+    ((10 * exchangeRates.BTC) / exchangeRates.ETH).toFixed(18),
+    18,
+  );
+
+  console.log('BTC amount:', ethers.formatUnits(btcAmount, 8));
+  console.log('ETH amount:', ethers.formatUnits(ethAmount, 18));
+
   await (await btcToken.mint(await deployer.getAddress(), btcAmount)).wait();
   await (await ethToken.mint(await deployer.getAddress(), ethAmount)).wait();
   await (
@@ -272,16 +328,50 @@ async function main() {
   console.table(poolInfo);
 }
 
+// https://blog.uniswap.org/uniswap-v3-math-primer#how-do-i-calculate-the-current-exchange-rate
+function GetPrice(PoolInfo: {
+  SqrtX96: number;
+  Decimal0: number;
+  Decimal1: number;
+}) {
+  let sqrtPriceX96 = PoolInfo.SqrtX96;
+  let Decimal0 = PoolInfo.Decimal0;
+  let Decimal1 = PoolInfo.Decimal1;
+
+  const buyOneOfToken0 = parseFloat(
+    ((sqrtPriceX96 / 2 ** 96) ** 2 / (10 ** Decimal1 / 10 ** Decimal0)).toFixed(
+      Decimal1,
+    ),
+  );
+
+  const buyOneOfToken1 = parseFloat((1 / buyOneOfToken0).toFixed(Decimal0));
+  console.log(
+    'price of token0 in value of token1 : ' + buyOneOfToken0.toString(),
+  );
+  console.log(
+    'price of token1 in value of token0 : ' + buyOneOfToken1.toString(),
+  );
+  console.log('');
+  // Convert to wei
+  const buyOneOfToken0Wei = Math.floor(
+    buyOneOfToken0 * 10 ** Decimal1,
+  ).toLocaleString('fullwide', { useGrouping: false });
+  const buyOneOfToken1Wei = Math.floor(
+    buyOneOfToken1 * 10 ** Decimal0,
+  ).toLocaleString('fullwide', { useGrouping: false });
+  console.log(
+    'price of token0 in value of token1 in lowest decimal : ' +
+      buyOneOfToken0Wei,
+  );
+  console.log(
+    'price of token1 in value of token1 in lowest decimal : ' +
+      buyOneOfToken1Wei,
+  );
+  console.log('');
+}
+
 // fetch exchange rates for each pool
 const getPrices = async () => {
-  // only kii network
-  const network = hre.network.name as 'kii' | 'hardhat';
-  if (network !== 'kii') {
-    throw new Error('This script is only for the kii network');
-  }
-  // const BTC_ETH = '0xC8716Cfa59c6EB3A038815A6334EE046C3e9Fd9E';
-  // const USDT_USDC = '0x4BB2fc3eC7d661912fb0639e3b47Dd1EA004BCCc';
-
   const factory = IUniswapV3Factory__factory.connect(
     FACTORY_ADDRESS,
     ethers.provider,
@@ -303,8 +393,17 @@ const getPrices = async () => {
   {
     const slot0 = await btcEthPoolContract.slot0();
     const sqrtPriceX96 = slot0.sqrtPriceX96;
-    const price = sqrtPriceX96 ** 2n;
-    console.log('BTC-ETH Pool Price:', price);
+    // console.log('BTC-ETH Pool Price:');
+
+    const [tokenA, tokenB] =
+      BTC_ADDRESS.toLowerCase() < ETH_ADDRESS.toLowerCase()
+        ? [BTC_ADDRESS, ETH_ADDRESS]
+        : [ETH_ADDRESS, BTC_ADDRESS];
+    GetPrice({
+      SqrtX96: parseInt(sqrtPriceX96.toString()),
+      Decimal0: tokenA === BTC_ADDRESS ? 8 : 18,
+      Decimal1: tokenB === ETH_ADDRESS ? 18 : 8,
+    });
 
     // reserves
     const btc = MockERC20__factory.connect(BTC_ADDRESS, ethers.provider);
@@ -317,8 +416,14 @@ const getPrices = async () => {
   {
     const slot0 = await usdtUsdcPoolContract.slot0();
     const sqrtPriceX96 = slot0.sqrtPriceX96;
-    const price = sqrtPriceX96 ** 2n;
-    console.log('USDT-USDC Pool Price:', price);
+    // const price = sqrtPriceX96 ** 2n;
+    // console.log('USDT-USDC Pool Price:', price);
+
+    GetPrice({
+      SqrtX96: parseInt(sqrtPriceX96.toString()),
+      Decimal0: 6,
+      Decimal1: 6,
+    });
 
     const USDT = MockERC20__factory.connect(USDT_ADDRESS, ethers.provider);
     const USDC = MockERC20__factory.connect(USDC_ADDRESS, ethers.provider);
@@ -342,3 +447,4 @@ main()
     console.error(error);
     process.exit(1);
   });
+// getPrices().catch(console.error);
