@@ -93,8 +93,8 @@ const config: HardhatUserConfig = {
       ],
     },
     kii: {
-      chainId: 11155111,
-      url: process.env.SEPOLIA_URL || 'https://rpc.sepolia.org',
+      chainId: 123454321,
+      url: 'https://a.sentry.testnet.kiivalidator.com:8645',
       accounts: [process.env.PRIVATE_KEY!],
     },
   },
