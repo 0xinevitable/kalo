@@ -33,7 +33,6 @@ export const HeroSection: React.FC = () => {
 const Wrapper = styled.div`
   width: 100%;
   height: 600px;
-  background-color: #caa8fb;
   display: flex;
 `;
 const Container = styled.section`
@@ -65,42 +64,6 @@ const BackgroundImageContainer = styled.div`
   display: flex;
   justify-content: center;
   position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-
-    width: 100%;
-    min-width: 100px;
-    max-width: 100px;
-    height: 100%;
-    background: linear-gradient(
-      to right,
-      #caa8fb 0%,
-      rgba(202, 168, 251, 0) 100%
-    );
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-
-    width: 100%;
-    min-width: 100px;
-    max-width: 100px;
-    height: 100%;
-    background: linear-gradient(
-      to left,
-      #caa8fb 0%,
-      rgba(202, 168, 251, 0) 100%
-    );
-  }
 `;
 const BackgroundImage = styled(Image)`
   width: 100%;
@@ -113,6 +76,7 @@ const BackgroundImage = styled(Image)`
   bottom: 0;
   z-index: -1;
   object-fit: cover;
+  filter: blur(2px);
 `;
 
 const HeroContent = styled.div`

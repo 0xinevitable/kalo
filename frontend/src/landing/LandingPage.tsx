@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 import { Notification } from '@/components/Notification';
 
+import { DiagramSection } from './sections/DiagramSection';
 import { FeaturesSection } from './sections/FeaturesSection';
 import { HeroSection } from './sections/HeroSection';
 
@@ -12,7 +13,7 @@ declare global {
   }
 }
 
-const HomePage = () => {
+const LandingPage = () => {
   const [account, setAccount] = useState<string>('');
 
   return (
@@ -21,6 +22,7 @@ const HomePage = () => {
       <Container>
         <HeroSection />
         <FeaturesSection />
+        <DiagramSection />
       </Container>
       <style jsx global>{`
         body {
@@ -31,7 +33,7 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default LandingPage;
 
 const Container = styled.main`
   padding: 0 20px;
