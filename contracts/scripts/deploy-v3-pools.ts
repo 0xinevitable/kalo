@@ -17,9 +17,9 @@ import { deployTokens } from './deploy-tokens';
 import { deployUniswapV3 } from './deploy-v3';
 
 // Uniswap V3 addresses
-let FACTORY_ADDRESS = '0xd6C1958586b7A6d84be7AF977BA79cFe97483AB3';
+let FACTORY_ADDRESS = '0x0a707f8E245772a3eDB30B6C9C02F26dC43Fcb5c';
 let NONFUNGIBLE_POSITION_MANAGER_ADDRESS =
-  '0xaA35Cc7bda4Df3D7c001cf5aE35EbA5aEdD2e439';
+  '0x0f7F9402c26b45134953eCfB55B5082A4C643ee0';
 
 // Token addresses
 let BTC_ADDRESS = '0x0b65426e7595758Fc6cc64F926e56C8f5382E778';
@@ -30,7 +30,6 @@ let USDC_ADDRESS = '0xc68326408D812507D34eF4b1583cAe2F62953afE';
 type PoolInfo = {
   name: string;
   address: string;
-  price: number;
   fee: number;
 };
 
@@ -118,13 +117,6 @@ async function addLiquidity(
     token0.toLowerCase() < token1.toLowerCase()
       ? [amount0Desired, amount1Desired]
       : [amount1Desired, amount0Desired];
-
-  // Calculate the desired price based on the provided amounts
-  const desiredPrice = Number(amount1) / Number(amount0);
-
-  const desiredTick = TickMath.getTickAtSqrtRatio(
-    JSBI.BigInt(parseUnits(Math.sqrt(desiredPrice).toString(), 18).toString()),
-  );
 
   const tickSpacing = TICK_SPACINGS[fee as keyof typeof TICK_SPACINGS];
   const currentTick = TickMath.getTickAtSqrtRatio(
@@ -240,8 +232,6 @@ async function main() {
   poolInfo.push({
     name: 'BTC-ETH',
     address: btcEthPoolAddress,
-    // price: btcEthPrice,
-    price: 0,
     fee: 500,
   });
 
@@ -264,7 +254,6 @@ async function main() {
   poolInfo.push({
     name: 'USDT-USDC',
     address: usdtUsdcPoolAddress,
-    price: usdtUsdcPrice,
     fee: 500,
   });
 

@@ -12,12 +12,12 @@ yarn workspace @kalo/contracts hardhat run scripts/deploy-univ3.ts
 ## V3
 
 ```
-WETH 0xce1E977512c8E80E5791f67B8cCf931f9AF5ec7b
-UniswapV3Factory 0xd6C1958586b7A6d84be7AF977BA79cFe97483AB3
-SwapRouter 0xA47220DC4C6019331A77Dbf31f88547337f6DE11
-NFTDescriptor 0x1f758Fe965a6e03cAaeA6D30F5b221b86B67c7a9
-NonfungibleTokenPositionDescriptor 0x45A7D717F68C00B7Ba419fBD349a344097005A0F
-NonfungiblePositionManager 0xaA35Cc7bda4Df3D7c001cf5aE35EbA5aEdD2e439
+WETH 0xdeC9F9F51f886Efc1032f5F6472D159dD951A259
+UniswapV3Factory 0x0a707f8E245772a3eDB30B6C9C02F26dC43Fcb5c
+SwapRouter 0xEEDf468F8cc80BcaF7a22d400BE416CF6AF22fe5
+NFTDescriptor 0xe234395b2E0317C169024bE43eFCb3bF4A41D57E
+NonfungibleTokenPositionDescriptor 0x1b71634fbE0d9C706daf7EeE8f5eb5f7271CF1C3
+NonfungiblePositionManager 0x0f7F9402c26b45134953eCfB55B5082A4C643ee0
 ```
 
 ## Mocked ERC20s
@@ -38,10 +38,10 @@ NonfungiblePositionManager 0xaA35Cc7bda4Df3D7c001cf5aE35EbA5aEdD2e439
 ## Pools
 
 ```js
-┌─────────┬─────────────┬──────────────────────────────────────────────┬────────────────────┬─────┐
-│ (index) │ name        │ address                                      │ price              │ fee │
-├─────────┼─────────────┼──────────────────────────────────────────────┼────────────────────┼─────┤
-│ 0       │ 'BTC-ETH'   │ '0xC8716Cfa59c6EB3A038815A6334EE046C3e9Fd9E' │ 24.832454280248488 │ 500 │
-│ 1       │ 'USDT-USDC' │ '0x4BB2fc3eC7d661912fb0639e3b47Dd1EA004BCCc' │ 1                  │ 500 │
-└─────────┴─────────────┴──────────────────────────────────────────────┴────────────────────┴─────┘
+┌─────────┬─────────────┬──────────────────────────────────────────────┬─────┐
+│ (index) │ name        │ address                                      │ fee │
+├─────────┼─────────────┼──────────────────────────────────────────────┼─────┤
+│ 0       │ 'BTC-ETH'   │ '0xfd3dFCa1CfC4CA38D096A8A509597C0144f3ca36' │ 500 │
+│ 1       │ 'USDT-USDC' │ '0x3Eb41EcCC7Dc80dF57A35af685df1aeCdCBf057B' │ 500 │
+└─────────┴─────────────┴──────────────────────────────────────────────┴─────┘
 ```
