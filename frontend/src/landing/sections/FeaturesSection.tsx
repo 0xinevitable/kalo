@@ -2,30 +2,23 @@ import styled from '@emotion/styled';
 import Image from 'next/image';
 
 import featureDashboard from '@/assets/feature-dashboard.png';
+import featureLiquidity from '@/assets/feature-liquidity.png';
 import featureStake from '@/assets/feature-stake.png';
 
 export const FeaturesSection: React.FC = () => {
   return (
     <Section>
       <CardList>
+        <PrimaryFeatureCard />
         <FeatureCard
           title={<>See all of your assets on KiiChain</>}
-          // FIXME:
-          description="KiiChain is a layer 1 blockchain built with the Cosmos SDK"
+          description="Real-time overview of all tokenized assets and LP positions. Track performance and manage your portfolio easily."
         >
           <FeatureImage alt="" src={featureDashboard} placeholder="blur" />
         </FeatureCard>
-        {/* <FeatureCard
-          title={<>Launch Tokens on the Bonding Curve</>}
-          // FIXME:
-          description="KiiChain is a layer 1 blockchain built with the Cosmos SDK"
-        >
-          <FeatureImage alt="" src={featureBondingCurve} placeholder="blur" />
-        </FeatureCard> */}
         <FeatureCard
-          title={<>One-click Stake and Unstake KII</>}
-          // FIXME:
-          description="KiiChain is a layer 1 blockchain built with the Cosmos SDK"
+          title={<>Seamless KII Staking</>}
+          description="Stake and unstake KII tokens within Kalo's dashboard. Earn rewards while supporting network security."
         >
           <FeatureImage alt="" src={featureStake} placeholder="blur" />
         </FeatureCard>
@@ -96,7 +89,7 @@ const CardContainer = styled.li`
 `;
 const CardContent = styled.div`
   display: flex;
-  padding: 0px 18px 24px 18px;
+  padding: 0px 18px 20px;
   flex-direction: column;
   gap: 8px;
   flex: 1;
@@ -111,6 +104,7 @@ const CardTitle = styled.h3`
   font-weight: 700;
   line-height: 103%; /* 28.84px */
   letter-spacing: -1.4px;
+  flex: 1;
 `;
 const CardDescription = styled.p`
   flex: 1;
@@ -118,7 +112,8 @@ const CardDescription = styled.p`
   color: #7628ff;
   font-size: 16px;
   font-weight: 500;
-  line-height: 120%; /* 19.2px */
+  line-height: 110%; /* 19.8px */
+  letter-spacing: -0.9px;
 `;
 
 const FeatureImage = styled(Image)`
@@ -126,4 +121,50 @@ const FeatureImage = styled(Image)`
   height: auto;
   object-fit: cover;
   background: linear-gradient(180deg, #b388ff 0%, #ffc2a1 100%);
+`;
+
+const PrimaryFeatureCard: React.FC = () => {
+  return (
+    <CardContainer>
+      <PrimaryFeatureImage alt="" src={featureLiquidity} />
+
+      <PrimaryFeatureTitle>
+        Where <br />
+        Liquidity <br />
+        Flows
+      </PrimaryFeatureTitle>
+      <PrimaryFeatureDescription>
+        {`Kalo's concentrated liquidity pools are permissionless, and highly capital efficient ⸺ for maximum returns.`}
+      </PrimaryFeatureDescription>
+    </CardContainer>
+  );
+};
+const PrimaryFeatureImage = styled(Image)`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #a46efd;
+`;
+const PrimaryFeatureTitle = styled.h3`
+  color: #fff;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 103%; /* 41.2px */
+  letter-spacing: -2px;
+
+  position: absolute;
+  left: 18px;
+  top: 20px;
+`;
+const PrimaryFeatureDescription = styled.p`
+  color: #d0b6ff;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 110%; /* 19.8px */
+  letter-spacing: -0.9px;
+
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 20px;
 `;
