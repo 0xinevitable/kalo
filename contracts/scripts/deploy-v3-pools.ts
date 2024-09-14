@@ -17,9 +17,9 @@ import { deployTokens } from './deploy-tokens';
 import { deployUniswapV3 } from './deploy-v3';
 
 // Uniswap V3 addresses
-let FACTORY_ADDRESS = '0xFf75ba159ab763a467638F95fC7447523222BB01';
+let FACTORY_ADDRESS = '0xd6C1958586b7A6d84be7AF977BA79cFe97483AB3';
 let NONFUNGIBLE_POSITION_MANAGER_ADDRESS =
-  '0x060ac14b8CAE7059D6dD713992c6E637371ecaF0';
+  '0xaA35Cc7bda4Df3D7c001cf5aE35EbA5aEdD2e439';
 
 // Token addresses
 let BTC_ADDRESS = '0x0b65426e7595758Fc6cc64F926e56C8f5382E778';
@@ -86,12 +86,12 @@ async function createPool(
   fee: number,
   sqrtPriceX96: bigint,
 ): Promise<string> {
-  // try {
-  //   await (await factoryContract.createPool(token0, token1, fee)).wait();
-  // } catch (err) {
-  //   console.log(err);
-  //   // throw new Error('Error creating pool');
-  // }
+  try {
+    await (await factoryContract.createPool(token0, token1, fee)).wait();
+  } catch (err) {
+    console.log(err);
+    // throw new Error('Error creating pool');
+  }
   console.log({ token0, token1, fee });
   const poolAddress = await factoryContract.getPool(token0, token1, fee);
   console.log(`Pool created: ${poolAddress}`);
@@ -125,16 +125,19 @@ async function addLiquidity(
   const desiredTick = TickMath.getTickAtSqrtRatio(
     JSBI.BigInt(parseUnits(Math.sqrt(desiredPrice).toString(), 18).toString()),
   );
-  const tick = nearestUsableTick(
-    desiredTick,
-    TICK_SPACINGS[fee as keyof typeof TICK_SPACINGS],
-  );
 
-  // Set a narrow range around the desired price (e.g., ±10 ticks)
-  const tickLower =
-    tick - 10 * TICK_SPACINGS[fee as keyof typeof TICK_SPACINGS];
-  const tickUpper =
-    tick + 10 * TICK_SPACINGS[fee as keyof typeof TICK_SPACINGS];
+  const tickSpacing = TICK_SPACINGS[fee as keyof typeof TICK_SPACINGS];
+  const currentTick = TickMath.getTickAtSqrtRatio(
+    JSBI.BigInt(sqrtPriceX96.toString()),
+  );
+  const tickLower = nearestUsableTick(
+    currentTick - tickSpacing * 10,
+    tickSpacing,
+  );
+  const tickUpper = nearestUsableTick(
+    currentTick + tickSpacing * 10,
+    tickSpacing,
+  );
 
   const mintParams = {
     token0: tokenA,
