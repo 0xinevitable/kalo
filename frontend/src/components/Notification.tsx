@@ -4,7 +4,7 @@ export const Notification: React.FC = () => {
   return (
     <Container>
       <SymbolLogo />
-      Kinetics is currently in testnet phase
+      Kalo is currently in testnet phase
       <SymbolLogo />
     </Container>
   );

@@ -1,11 +1,11 @@
 {
-  "name": "kinetics",
+  "name": "kalo",
   "version": "1.0.0",
-  "repository": "https://github.com/inevitable-dao/kinetics.git",
+  "repository": "https://github.com/inevitable-dao/kalo.git",
   "author": "Junho Yeo <i@junho.io>",
   "private": true,
   "scripts": {
-    "dev": "yarn workspace @kinetics/frontend dev",
+    "dev": "yarn workspace @kalo/frontend dev",
     "format": "prettier --write ."
   },
   "workspaces": [

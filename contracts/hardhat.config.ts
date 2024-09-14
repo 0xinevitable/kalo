@@ -77,7 +77,7 @@ const config: HardhatUserConfig = {
         },
       ],
     },
-    sepolia: {
+    kii: {
       chainId: 11155111,
       url: process.env.SEPOLIA_URL || 'https://rpc.sepolia.org',
       accounts: [process.env.PRIVATE_KEY!],

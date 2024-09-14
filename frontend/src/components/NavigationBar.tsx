@@ -57,6 +57,10 @@ export const NavigationBar = () => {
   return (
     <Wrapper>
       <Container>
+        <Link href="/">
+          <BrandLogo alt="" src="/assets/kalo-logo.svg" />
+        </Link>
+
         <NavigationList>
           {NAVIGATION_ITEMS.map((item) => (
             <NavigationItem
@@ -88,7 +92,6 @@ const Wrapper = styled.header`
 
   display: flex;
   justify-content: center;
-  overflow: hidden;
 
   position: fixed;
   top: 36px;
@@ -131,6 +134,11 @@ const Container = styled.div`
   }
 `;
 
+const BrandLogo = styled.img`
+  width: 95px;
+  height: 36px;
+`;
+
 const NavigationList = styled.ul`
   display: flex;
   gap: 20px;
@@ -145,7 +153,7 @@ type NavigationItemProps = {
 };
 const NavigationItem = styled.li<NavigationItemProps>`
   position: relative;
-  color: #343639;
+  color: rgba(52, 54, 57, 0.6);
 
   * {
     transition: color 0.05s ease;
@@ -166,7 +174,7 @@ const NavigationItem = styled.li<NavigationItemProps>`
   ${({ active }) =>
     active &&
     css`
-      color: white;
+      color: #5d00ff;
 
       &::after {
         height: 4px;

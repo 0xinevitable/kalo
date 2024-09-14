@@ -34,7 +34,7 @@ const HomePage = () => {
 export default HomePage;
 
 const Container = styled.main`
-  padding: 42px 20px 0;
+  padding: 0 20px;
 
   display: flex;
   flex-direction: column;

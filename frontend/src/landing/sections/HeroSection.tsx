@@ -16,12 +16,10 @@ export const HeroSection: React.FC = () => {
         </BackgroundImageWrapper>
 
         <HeroContent>
-          <BrandLogo alt="" src="/assets/kinetics-logo.svg" />
-          <span className="sr-only">Kinetics</span>
+          <span className="sr-only">Kalo</span>
           <Title>
-            The <br />
-            Infra Hub
-            <br /> for KiiChain
+            The DeFi Hub <br />
+            for KiiChain
           </Title>
           <Link href="/home">
             <Button>Start Now</Button>
@@ -34,7 +32,7 @@ export const HeroSection: React.FC = () => {
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 650px;
+  height: 600px;
   background-color: #caa8fb;
   display: flex;
 `;
@@ -125,25 +123,21 @@ const HeroContent = styled.div`
 
   display: flex;
   flex-direction: column;
-`;
-const BrandLogo = styled.img`
-  width: 169px; // 155 + 14
-  height: 64px; // 36 + 14*2
-  margin: -14px 0;
-  margin-left: -14px;
+  align-items: center;
 `;
 const Title = styled.h1`
-  margin-top: 40px;
+  margin-top: 140px;
   margin-bottom: 20px;
 
   color: #1d004f;
+  text-align: center;
   text-shadow: 0px 12px 49px #d4bcff;
   font-family: ${JostFont.style.fontFamily};
   font-size: 72px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 105%; /* 75.6px */
-  letter-spacing: -6px;
+  letter-spacing: -5.04px;
   text-transform: uppercase;
 `;
 const Button = styled.button`
@@ -155,12 +149,13 @@ const Button = styled.button`
   align-items: center;
 
   border-radius: 12px;
-  background: #fff;
+  background: #1d004f;
+  box-shadow: 0px 12px 32px 0px rgba(37, 0, 101, 0.32);
 
-  color: #1d004f;
+  color: #fff;
   text-shadow: 0px 12px 49px #d4bcff;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 105%; /* 25.2px */
-  letter-spacing: -2.4px;
+  letter-spacing: -1.2px;
 `;

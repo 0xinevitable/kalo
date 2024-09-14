@@ -1,4 +1,4 @@
-# Kinetics
+# Kalo
 
 ## Bonding Curve
 

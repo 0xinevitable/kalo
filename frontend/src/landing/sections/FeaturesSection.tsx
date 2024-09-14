@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 import Image from 'next/image';
 
-import featureBondingCurve from '@/assets/feature-bonding-curve.png';
 import featureDashboard from '@/assets/feature-dashboard.png';
-import featureSynth from '@/assets/feature-synth.png';
+import featureStake from '@/assets/feature-stake.png';
 
 export const FeaturesSection: React.FC = () => {
   return (
@@ -16,19 +15,19 @@ export const FeaturesSection: React.FC = () => {
         >
           <FeatureImage alt="" src={featureDashboard} placeholder="blur" />
         </FeatureCard>
-        <FeatureCard
+        {/* <FeatureCard
           title={<>Launch Tokens on the Bonding Curve</>}
           // FIXME:
           description="KiiChain is a layer 1 blockchain built with the Cosmos SDK"
         >
           <FeatureImage alt="" src={featureBondingCurve} placeholder="blur" />
-        </FeatureCard>
+        </FeatureCard> */}
         <FeatureCard
-          title={<>Mint Synthetic Assets with RWAs/xTokens</>}
+          title={<>One-click Stake and Unstake KII</>}
           // FIXME:
           description="KiiChain is a layer 1 blockchain built with the Cosmos SDK"
         >
-          <FeatureImage alt="" src={featureSynth} placeholder="blur" />
+          <FeatureImage alt="" src={featureStake} placeholder="blur" />
         </FeatureCard>
       </CardList>
     </Section>
