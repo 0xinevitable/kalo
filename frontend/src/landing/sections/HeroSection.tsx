@@ -11,7 +11,7 @@ export const HeroSection: React.FC = () => {
       <Container>
         <BackgroundImageWrapper>
           <BackgroundImageContainer>
-            <BackgroundImage alt="" src={heroBackground} />
+            <BackgroundImage alt="" src={heroBackground} placeholder="blur" />
           </BackgroundImageContainer>
         </BackgroundImageWrapper>
 

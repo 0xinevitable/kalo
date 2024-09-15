@@ -13,7 +13,7 @@ export const DiagramSection: React.FC = () => {
           & ONCHAIN INFO <br />
           WHERE NEEDED
         </Title>
-        <DiagramImage alt="" src={diagramImage} />
+        <DiagramImage alt="" src={diagramImage} placeholder="blur" />
       </Container>
     </Wrapper>
   );

@@ -28,7 +28,7 @@ export const StakingSection: React.FC = () => {
           <Badge>✨ Connect your wallet & See yours too!</Badge>
         </ButtonWrapper>
 
-        <ComponentsImage src={componentsImage} alt="" />
+        <ComponentsImage src={componentsImage} alt="" placeholder="blur" />
       </Container>
     </Wrapper>
   );
