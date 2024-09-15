@@ -66,13 +66,14 @@ export const KII = {
       style={{ width: 36, height: 36 }}
     />
   ),
-};
+} as const;
 
 export const sKII = {
   name: 'sKII',
   symbol: 'sKII',
   decimals: 6,
   address: '0x8eB71002a452732E4D7DD399fe956a443717C903',
+  logoURL: '/assets/skii.png',
   image: (
     <div className="w-[36px] h-[36px] relative">
       <Image
@@ -92,7 +93,7 @@ export const sKII = {
       />
     </div>
   ),
-};
+} as const;
 
 export const TOKENS = [
   {

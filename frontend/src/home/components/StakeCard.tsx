@@ -1,11 +1,83 @@
 import styled from '@emotion/styled';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { formatEther, parseEther } from 'viem';
 
 import kiiToSkiiImage from '@/assets/kii-to-skii.png';
+import { KII, client, sKII } from '@/constants/tokens';
+
+import { StakeTokenInput } from './StakeTokenInput';
+
+const STAKED_KII_ADDRESS = '0x8eB71002a452732E4D7DD399fe956a443717C903';
 
 export const StakeCard: React.FC = () => {
   const [stage, setStage] = useState<'main' | 'stake' | 'unstake'>('main');
+  const [draft, setDraft] = useState<string>('');
+  const [estimation, setEstimation] = useState<string>('0');
+
+  useEffect(() => {
+    if (draft === '') {
+      setEstimation('0');
+      return;
+    }
+
+    const fetchEstimation = async () => {
+      try {
+        const amount = parseEther(draft);
+        const functionName =
+          stage === 'stake' ? 'estimateStakeOut' : 'estimateUnstakeOut';
+
+        const estimatedAmount = await client.readContract({
+          address: STAKED_KII_ADDRESS,
+          abi: ABI,
+          functionName,
+          args: [amount],
+        });
+
+        setEstimation(formatEther(estimatedAmount));
+      } catch (error) {
+        console.error('Estimation failed:', error);
+        setEstimation('0');
+      }
+    };
+
+    fetchEstimation();
+  }, [draft, stage]);
+
+  // const handleSwap = async () => {
+  //   if (!account || !library) {
+  //     alert('Please connect your wallet');
+  //     return;
+  //   }
+
+  //   // const sKIIContract = new ethers.Contract(
+  //   //   STAKED_KII_ADDRESS,
+  //   //   StakedKIIABI,
+  //   //   library.getSigner(),
+  //   // );
+  //   const amount = parseEther(draft);
+
+  //   try {
+  //     let tx;
+  //     if (stage === 'stake') {
+  //       tx = await sKIIContract.stake({ value: amount });
+  //     } else {
+  //       tx = await sKIIContract.unstake(amount);
+  //     }
+  //     await tx.wait();
+  //     alert(`${stage === 'stake' ? 'Stake' : 'Unstake'} successful!`);
+  //     setDraft('');
+  //     setEstimation('0');
+  //   } catch (error) {
+  //     console.error(
+  //       `${stage === 'stake' ? 'Stake' : 'Unstake'} failed:`,
+  //       error,
+  //     );
+  //     alert(
+  //       `${stage === 'stake' ? 'Stake' : 'Unstake'} failed. Please try again.`,
+  //     );
+  //   }
+  // };
 
   return (
     <Container>
@@ -29,18 +101,49 @@ export const StakeCard: React.FC = () => {
           </div>
         </>
       ) : (
-        <>
+        <div className="flex flex-col w-full">
           <InteractionTitleContainer>
             <InteractionTitle>
               {stage === 'stake' ? 'Stake KII' : 'Unstake sKII'}
             </InteractionTitle>
             <Chavron
               className="transition-opacity cursor-pointer hover:opacity-65"
-              onClick={() => setStage('main')}
+              onClick={() => {
+                setStage('main');
+
+                // reset draft and estimation
+                setDraft('');
+                setEstimation('0');
+              }}
             />
           </InteractionTitleContainer>
-          <div className="mt-[10px] flex items-center w-full gap-[6px]"></div>
-        </>
+          <div className="mt-[10px] flex flex-col items-center w-full gap-[10px]">
+            <StakeTokenInput
+              label="Sell"
+              token={stage === 'stake' ? KII : sKII}
+              value={draft}
+              placeholder="0"
+              onChange={(e) => {
+                setDraft(e.target.value);
+              }}
+            />
+            <StakeTokenInput
+              label="Buy"
+              token={stage === 'stake' ? sKII : KII}
+              disabled
+              value={estimation}
+              onChange={(e) => {
+                setEstimation(e.target.value);
+              }}
+            />
+            <Button
+              className="flex-1 w-full primary"
+              style={{ padding: '12px 0' }}
+            >
+              Swap
+            </Button>
+          </div>
+        </div>
       )}
     </Container>
   );
@@ -48,6 +151,7 @@ export const StakeCard: React.FC = () => {
 
 const Container = styled.div`
   width: 100%;
+  max-width: 464px;
 
   padding: 12px;
   border-radius: 16px;
@@ -55,6 +159,9 @@ const Container = styled.div`
   background: linear-gradient(180deg, rgba(255, 255, 255, 0) 5%, #fff 100%);
 
   box-shadow: 0px 16px 32px 0px rgba(29, 0, 79, 0.06);
+
+  display: flex;
+  flex-direction: column;
 `;
 const StakeImageWrapper = styled.div`
   margin: 0 auto;
@@ -184,3 +291,381 @@ const Chavron: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     </defs>
   </svg>
 );
+
+const ABI = [
+  {
+    inputs: [],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'spender',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'allowance',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'needed',
+        type: 'uint256',
+      },
+    ],
+    name: 'ERC20InsufficientAllowance',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'sender',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'balance',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'needed',
+        type: 'uint256',
+      },
+    ],
+    name: 'ERC20InsufficientBalance',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'approver',
+        type: 'address',
+      },
+    ],
+    name: 'ERC20InvalidApprover',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'receiver',
+        type: 'address',
+      },
+    ],
+    name: 'ERC20InvalidReceiver',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'sender',
+        type: 'address',
+      },
+    ],
+    name: 'ERC20InvalidSender',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'spender',
+        type: 'address',
+      },
+    ],
+    name: 'ERC20InvalidSpender',
+    type: 'error',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'spender',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    name: 'Approval',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'from',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    name: 'Transfer',
+    type: 'event',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'spender',
+        type: 'address',
+      },
+    ],
+    name: 'allowance',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'spender',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    name: 'approve',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'decimals',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'pure',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'ethAmount',
+        type: 'uint256',
+      },
+    ],
+    name: 'estimateStakeOut',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'pure',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'tokenAmount',
+        type: 'uint256',
+      },
+    ],
+    name: 'estimateUnstakeOut',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'pure',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'name',
+    outputs: [
+      {
+        internalType: 'string',
+        name: '',
+        type: 'string',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'stake',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'symbol',
+    outputs: [
+      {
+        internalType: 'string',
+        name: '',
+        type: 'string',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'totalSupply',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    name: 'transfer',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'from',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    name: 'transferFrom',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'unstake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    stateMutability: 'payable',
+    type: 'receive',
+  },
+] as const;
