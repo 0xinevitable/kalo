@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { formatEther, parseEther } from 'viem';
+import { useAccount, useWalletClient } from 'wagmi';
 
 import kiiToSkiiImage from '@/assets/kii-to-skii.png';
 import { KII, client, sKII } from '@/constants/tokens';
@@ -44,40 +45,50 @@ export const StakeCard: React.FC = () => {
     fetchEstimation();
   }, [draft, stage]);
 
-  // const handleSwap = async () => {
-  //   if (!account || !library) {
-  //     alert('Please connect your wallet');
-  //     return;
-  //   }
+  const { address } = useAccount();
+  const walletClientRes = useWalletClient();
 
-  //   // const sKIIContract = new ethers.Contract(
-  //   //   STAKED_KII_ADDRESS,
-  //   //   StakedKIIABI,
-  //   //   library.getSigner(),
-  //   // );
-  //   const amount = parseEther(draft);
+  const handleSwap = async () => {
+    const walletClient = walletClientRes.data;
+    if (!address || !walletClient) {
+      alert('Please connect your wallet');
+      return;
+    }
 
-  //   try {
-  //     let tx;
-  //     if (stage === 'stake') {
-  //       tx = await sKIIContract.stake({ value: amount });
-  //     } else {
-  //       tx = await sKIIContract.unstake(amount);
-  //     }
-  //     await tx.wait();
-  //     alert(`${stage === 'stake' ? 'Stake' : 'Unstake'} successful!`);
-  //     setDraft('');
-  //     setEstimation('0');
-  //   } catch (error) {
-  //     console.error(
-  //       `${stage === 'stake' ? 'Stake' : 'Unstake'} failed:`,
-  //       error,
-  //     );
-  //     alert(
-  //       `${stage === 'stake' ? 'Stake' : 'Unstake'} failed. Please try again.`,
-  //     );
-  //   }
-  // };
+    try {
+      const amount = parseEther(draft);
+      let tx;
+
+      if (stage === 'stake') {
+        tx = await walletClient.writeContract({
+          address: STAKED_KII_ADDRESS,
+          abi: ABI,
+          functionName: 'stake',
+          value: amount,
+        });
+      } else {
+        tx = await walletClient.writeContract({
+          address: STAKED_KII_ADDRESS,
+          abi: ABI,
+          functionName: 'unstake',
+          args: [amount],
+        });
+      }
+
+      await client.waitForTransactionReceipt({ hash: tx });
+      alert(`${stage === 'stake' ? 'Stake' : 'Unstake'} successful!`);
+      setDraft('');
+      setEstimation('0');
+    } catch (error) {
+      console.error(
+        `${stage === 'stake' ? 'Stake' : 'Unstake'} failed:`,
+        error,
+      );
+      alert(
+        `${stage === 'stake' ? 'Stake' : 'Unstake'} failed. Please try again.`,
+      );
+    }
+  };
 
   return (
     <Container>
@@ -139,6 +150,7 @@ export const StakeCard: React.FC = () => {
             <Button
               className="flex-1 w-full primary"
               style={{ padding: '12px 0' }}
+              onClick={handleSwap}
             >
               Swap
             </Button>
