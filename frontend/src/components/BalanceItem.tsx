@@ -8,7 +8,7 @@ export type BalanceItemProps = {
   balance: bigint;
   decimals: number;
   valuation: number;
-  priceChange?: number;
+  priceDiff24h?: number;
 };
 
 export const BalanceItem: React.FC<BalanceItemProps> = ({
@@ -18,9 +18,13 @@ export const BalanceItem: React.FC<BalanceItemProps> = ({
   balance,
   decimals,
   valuation,
-  priceChange,
+  priceDiff24h,
 }) => {
-  const formattedBalance = formatUnits(balance, decimals);
+  const formattedBalance = parseFloat(
+    formatUnits(balance, decimals),
+  ).toLocaleString(undefined, {
+    maximumSignificantDigits: 6,
+  });
 
   return (
     <GovernanceTokenCard>
@@ -33,10 +37,10 @@ export const BalanceItem: React.FC<BalanceItemProps> = ({
       </div>
       <div className="flex flex-col items-center">
         <Valuation>{`$${valuation.toLocaleString()}`}</Valuation>
-        {typeof priceChange === 'undefined' ? null : priceChange > 0 ? (
-          <span className="text-green-500">{`+${priceChange}%`}</span>
+        {typeof priceDiff24h === 'undefined' ? null : priceDiff24h > 0 ? (
+          <span className="text-green-500">{`+${priceDiff24h}%`}</span>
         ) : (
-          <span className="text-red-500">{`${priceChange}%`}</span>
+          <span className="text-red-500">{`${priceDiff24h}%`}</span>
         )}
       </div>
     </GovernanceTokenCard>

@@ -6,8 +6,9 @@ import kiiToSkiiImage from '@/assets/kii-to-skii.png';
 import shieldImage from '@/assets/shield.png';
 import { BalanceItem } from '@/components/BalanceItem';
 import { Notification } from '@/components/Notification';
-import { sKII } from '@/constants/tokens';
+import { TOKENS, getToken, sKII } from '@/constants/tokens';
 import { usePassportScore } from '@/hooks/usePassportScore';
+import { useWalletTokens } from '@/hooks/useWalletTokens';
 
 import UniswapV3PositionsList from './components/UniswapV3PositionsList';
 
@@ -25,6 +26,8 @@ const HomePage = () => {
   const loading = false;
   const error = '';
   const score = '32.95';
+
+  const tokenBalances = useWalletTokens();
 
   return (
     <>
@@ -117,7 +120,19 @@ const HomePage = () => {
           <div className="flex gap-4">
             <Card>
               <CardTitle>Assets</CardTitle>
-              <BalanceList></BalanceList>
+              <BalanceList>
+                {Object.values(tokenBalances).map((token) => (
+                  <BalanceItem
+                    key={token.address}
+                    {...token}
+                    balance={token.balance}
+                    valuation={
+                      (token.price * parseInt(token.balance.toString())) /
+                      10 ** token.decimals
+                    }
+                  />
+                ))}
+              </BalanceList>
             </Card>
             <DefiCardList>
               <Card>
