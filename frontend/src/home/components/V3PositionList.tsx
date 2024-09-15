@@ -1,18 +1,12 @@
-import { FullMath, SqrtPriceMath, TickMath } from '@uniswap/v3-sdk';
+import { SqrtPriceMath, TickMath } from '@uniswap/v3-sdk';
 import JSBI from 'jsbi';
 import React, { useEffect, useState } from 'react';
-import {
-  Address,
-  createPublicClient,
-  formatUnits,
-  http,
-  isAddress,
-  parseAbi,
-} from 'viem';
+import { Address, createPublicClient, http, isAddress, parseAbi } from 'viem';
 
 import { BalanceList } from '@/components/BalanceList';
 import { PositionItem } from '@/components/PositionItem';
-import { getToken, kiichainTestnet } from '@/constants/tokens';
+import { kiichainTestnet } from '@/constants/chain';
+import { getToken } from '@/constants/tokens';
 
 // Uniswap V3 NonfungiblePositionManager ABI (only the functions we need)
 const positionManagerAbi = parseAbi([

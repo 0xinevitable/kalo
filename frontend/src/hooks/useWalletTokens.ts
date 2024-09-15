@@ -1,24 +1,9 @@
-import { multicall } from '@wagmi/core';
 import { useEffect, useState } from 'react';
-import {
-  Address,
-  createPublicClient,
-  erc20Abi,
-  formatUnits,
-  http,
-  multicall3Abi,
-  zeroAddress,
-} from 'viem';
-import { useAccount, usePublicClient } from 'wagmi';
+import { Address, createPublicClient, erc20Abi, http, zeroAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 
-import {
-  KII,
-  TOKENS,
-  TokenInfo,
-  getToken,
-  kiichainTestnet,
-  sKII,
-} from '@/constants/tokens';
+import { kiichainTestnet } from '@/constants/chain';
+import { KII, TOKENS, TokenInfo } from '@/constants/tokens';
 
 // 토큰 타입 정의
 interface Token {

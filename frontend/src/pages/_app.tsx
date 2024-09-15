@@ -1,30 +1,24 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { AppProps } from 'next/app';
 import React from 'react';
-import { WagmiProvider, createConfig, http } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 
 import { NavigationBar } from '@/components/NavigationBar';
-import { kiichainTestnet } from '@/constants/tokens';
+import { config, queryClient } from '@/constants/config';
 import { SpaceGroteskFont } from '@/styles/fonts';
 import '@/styles/global.css';
-
-const config = createConfig({
-  chains: [kiichainTestnet],
-  transports: {
-    [kiichainTestnet.id]: http(),
-  },
-});
-
-const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <React.Fragment>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <NavigationBar />
+          <RainbowKitProvider>
+            <NavigationBar />
 
-          <Component {...pageProps} />
+            <Component {...pageProps} />
+          </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>
 
