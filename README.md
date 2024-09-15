@@ -9,10 +9,10 @@ cd contracts
 yarn workspace @kalo/contracts hardhat run scripts/deploy-univ3.ts
 ```
 
-## Multicall2
+## Multicall3
 
 ```
-Multicall2 0x51ee017f7C6be1fB31ec818Cab5441E656182c0E
+Multicall3 0x032690D03EB035B8D1e43A57086ee5b829ebf316
 ```
 
 ## V3
