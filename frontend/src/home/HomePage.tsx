@@ -11,8 +11,9 @@ import { Notification } from '@/components/Notification';
 import { TOKENS, getToken, sKII } from '@/constants/tokens';
 import { usePassportScore } from '@/hooks/usePassportScore';
 import { useWalletTokens } from '@/hooks/useWalletTokens';
+import { shortenAddress } from '@/utils/address';
 
-import UniswapV3PositionsList from './components/UniswapV3PositionsList';
+import { V3PositionList } from './components/V3PositionList';
 
 declare global {
   interface Window {
@@ -29,7 +30,8 @@ const HomePage: NextPage = () => {
   const error = '';
   const score = '32.95';
 
-  const tokenBalances = useWalletTokens();
+  const address = '0x56855Cc20f5A6745e88F5d357014a540AB081671';
+  const tokenBalances = useWalletTokens(address);
 
   const sortedTokens = useMemo(
     () =>
@@ -55,14 +57,14 @@ const HomePage: NextPage = () => {
       <Notification />
 
       {/* main */}
-      <main className="mt-[100px] flex flex-col w-full max-w-[1000px] mx-auto px-4">
+      <main className="mt-[100px] mb-[160px] flex flex-col w-full max-w-[1000px] mx-auto px-4">
         {/* top */}
         <div className="flex w-full gap-4">
           <div className="flex flex-col flex-1 gap-4">
             <SummaryContainer>
               <div className="flex flex-col">
                 <SummaryField>Wallet</SummaryField>
-                <SummaryValue>0x7777...10c4</SummaryValue>
+                <SummaryValue>{shortenAddress(address)}</SummaryValue>
               </div>
 
               <div className="flex flex-col">
@@ -158,9 +160,7 @@ const HomePage: NextPage = () => {
             <DefiCardList>
               <Card>
                 <CardTitle>Providing Liquidity</CardTitle>
-                {/* <BalanceList>
-                </BalanceList> */}
-                <UniswapV3PositionsList />
+                <V3PositionList address={address} />
               </Card>
             </DefiCardList>
           </div>

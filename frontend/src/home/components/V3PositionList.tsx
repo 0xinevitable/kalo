@@ -1,7 +1,14 @@
 import { FullMath, SqrtPriceMath, TickMath } from '@uniswap/v3-sdk';
 import JSBI from 'jsbi';
-import React, { useState } from 'react';
-import { Address, createPublicClient, formatUnits, http, parseAbi } from 'viem';
+import React, { useEffect, useState } from 'react';
+import {
+  Address,
+  createPublicClient,
+  formatUnits,
+  http,
+  isAddress,
+  parseAbi,
+} from 'viem';
 
 import { getToken, kiichainTestnet } from '@/constants/tokens';
 
@@ -61,8 +68,11 @@ function getTokenAmounts(
   };
 }
 
-const UniswapV3PositionsList: React.FC = () => {
-  const [walletAddress, setWalletAddress] = useState<string>('');
+type V3PositionListProps = {
+  address: Address;
+};
+
+export const V3PositionList: React.FC<V3PositionListProps> = ({ address }) => {
   const [positions, setPositions] = useState<Position[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -189,28 +199,15 @@ const UniswapV3PositionsList: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (walletAddress) {
-      fetchPositions(walletAddress as Address);
+  useEffect(() => {
+    if (!isAddress(address)) {
+      return;
     }
-  };
+    fetchPositions(address);
+  }, [address]);
 
   return (
     <div className="p-4">
-      <h1 className="mb-4 text-2xl font-bold">Uniswap V3 Positions</h1>
-      <form onSubmit={handleSubmit} className="mb-4">
-        <input
-          type="text"
-          value={walletAddress}
-          onChange={(e) => setWalletAddress(e.target.value)}
-          placeholder="Enter wallet address"
-          className="p-2 mr-2 border"
-        />
-        <button type="submit" className="p-2 text-white bg-blue-500 rounded">
-          Fetch Positions
-        </button>
-      </form>
       {isLoading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {positions.length > 0 && (
@@ -263,5 +260,3 @@ const UniswapV3PositionsList: React.FC = () => {
     </div>
   );
 };
-
-export default UniswapV3PositionsList;

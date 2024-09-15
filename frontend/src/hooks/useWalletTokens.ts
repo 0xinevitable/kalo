@@ -56,16 +56,14 @@ const client = createPublicClient({
 });
 
 // 커스텀 훅 정의
-export function useWalletTokens() {
-  const { address } = useAccount();
+export function useWalletTokens(address: Address) {
   const publicClient = usePublicClient();
   const [tokenData, setTokenData] = useState<Record<string, TokenData>>({});
 
   useEffect(() => {
-    // if (!address) return;
+    if (!address) return;
 
     const fetchTokenData = async () => {
-      const address = '0x56855Cc20f5A6745e88F5d357014a540AB081671';
       try {
         // 멀티콜 계약 호출 준비
         const calls = TOKENS.flatMap((token) => [
