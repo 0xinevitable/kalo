@@ -1,9 +1,23 @@
 import { multicall } from '@wagmi/core';
 import { useEffect, useState } from 'react';
-import { Address, createPublicClient, erc20Abi, formatUnits, http } from 'viem';
+import {
+  Address,
+  createPublicClient,
+  erc20Abi,
+  formatUnits,
+  http,
+  multicall3Abi,
+  zeroAddress,
+} from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 
-import { TOKENS, getToken, kiichainTestnet } from '@/constants/tokens';
+import {
+  KII,
+  TOKENS,
+  getToken,
+  kiichainTestnet,
+  sKII,
+} from '@/constants/tokens';
 
 // 토큰 타입 정의
 interface Token {
@@ -14,7 +28,15 @@ interface Token {
 }
 
 // 토큰 데이터 타입 정의
-type TokenData = (typeof TOKENS)[number] & {
+type TokenInfo = {
+  name: string;
+  symbol: string;
+  decimals: number;
+  address: Address;
+  logoURL: string;
+  image: React.ReactNode;
+};
+type TokenData = TokenInfo & {
   balance: bigint;
   price: number;
   priceDiff24h: number;
@@ -41,9 +63,9 @@ export function useWalletTokens() {
 
   useEffect(() => {
     // if (!address) return;
-    const address = '0x56855Cc20f5A6745e88F5d357014a540AB081671';
 
     const fetchTokenData = async () => {
+      const address = '0x56855Cc20f5A6745e88F5d357014a540AB081671';
       try {
         // 멀티콜 계약 호출 준비
         const calls = TOKENS.flatMap((token) => [
@@ -56,9 +78,12 @@ export function useWalletTokens() {
         ]);
 
         // 멀티콜 실행
-        const results = await client.multicall({
-          contracts: calls,
-        });
+        const [results, kiiBalance] = await Promise.all([
+          client.multicall({
+            contracts: calls,
+          }),
+          publicClient?.getBalance({ address }).catch(() => 0n) || 0n,
+        ]);
 
         // CoinGecko API에서 가격 정보 가져오기
         // const ids = tokens.map((token) => token.symbol.toLowerCase()).join(',');
@@ -86,7 +111,18 @@ export function useWalletTokens() {
           };
         });
 
-        setTokenData(newTokenData);
+        console.log(results);
+
+        setTokenData({
+          ...newTokenData,
+          [zeroAddress]: {
+            ...KII,
+            balance: kiiBalance || 0n,
+            // FIXME:
+            price: 0,
+            priceDiff24h: 0,
+          },
+        });
       } catch (error) {
         console.error('Failed to fetch token data:', error);
       }

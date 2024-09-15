@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
+import { NextPage } from 'next';
 import Image from 'next/image';
-import React from 'react';
-import { NextPage } from 'next'
+import React, { useMemo } from 'react';
+import { formatUnits, parseUnits } from 'viem';
 
 import kiiToSkiiImage from '@/assets/kii-to-skii.png';
 import shieldImage from '@/assets/shield.png';
@@ -29,6 +30,25 @@ const HomePage: NextPage = () => {
   const score = '32.95';
 
   const tokenBalances = useWalletTokens();
+
+  const sortedTokens = useMemo(
+    () =>
+      Object.values(tokenBalances)
+        .map((token) => ({
+          ...token,
+          valuation:
+            (token.price * parseInt(token.balance.toString())) /
+            10 ** token.decimals,
+        }))
+        .sort(
+          (a, b) =>
+            // 1. valuation -> 2. amount
+            b.valuation - a.valuation ||
+            parseFloat(formatUnits(b.balance, b.decimals)) -
+              parseFloat(formatUnits(a.balance, a.decimals)),
+        ),
+    [tokenBalances],
+  );
 
   return (
     <>
@@ -122,7 +142,7 @@ const HomePage: NextPage = () => {
             <Card>
               <CardTitle>Assets</CardTitle>
               <BalanceList>
-                {Object.values(tokenBalances).map((token) => (
+                {sortedTokens.map((token) => (
                   <BalanceItem
                     key={token.address}
                     {...token}

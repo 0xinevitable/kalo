@@ -2,17 +2,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppProps } from 'next/app';
 import React from 'react';
 import { WagmiProvider, createConfig, http } from 'wagmi';
-import { mainnet, sepolia } from 'wagmi/chains';
 
 import { NavigationBar } from '@/components/NavigationBar';
+import { kiichainTestnet } from '@/constants/tokens';
 import { SpaceGroteskFont } from '@/styles/fonts';
 import '@/styles/global.css';
 
 const config = createConfig({
-  chains: [mainnet, sepolia],
+  chains: [kiichainTestnet],
   transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [kiichainTestnet.id]: http(),
   },
 });
 

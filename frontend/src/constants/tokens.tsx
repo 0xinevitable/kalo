@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { defineChain } from 'viem';
+import { defineChain, zeroAddress } from 'viem';
 
 import skiiImage from '@/assets/skii.png';
 
@@ -7,8 +7,8 @@ export const kiichainTestnet = defineChain({
   id: 123454321,
   name: 'Kiichain Tesnet',
   nativeCurrency: {
-    name: 'kii',
-    symbol: 'kii',
+    name: 'KII',
+    symbol: 'KII',
     decimals: 18,
   },
   rpcUrls: {
@@ -30,6 +30,23 @@ export const kiichainTestnet = defineChain({
     },
   },
 });
+
+export const KII = {
+  name: 'KII',
+  symbol: 'KII',
+  decimals: 18,
+  address: zeroAddress,
+  logoURL: '/assets/kii.png',
+  image: (
+    <Image
+      src="/assets/kii.png"
+      alt=""
+      width={72}
+      height={72}
+      style={{ width: 36, height: 36 }}
+    />
+  ),
+};
 
 export const sKII = {
   name: 'sKII',
