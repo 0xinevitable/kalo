@@ -126,10 +126,6 @@ const HomePage = () => {
                 </BalanceList> */}
                 <UniswapV3PositionsList />
               </Card>
-              <Card>
-                <CardTitle>Launchpad</CardTitle>
-                <BalanceList></BalanceList>
-              </Card>
             </DefiCardList>
           </div>
         </div>

@@ -1,9 +1,9 @@
 import { FullMath, SqrtPriceMath, TickMath } from '@uniswap/v3-sdk';
 import JSBI from 'jsbi';
 import React, { useState } from 'react';
-import { Address, createPublicClient, http, parseAbi } from 'viem';
+import { Address, createPublicClient, formatUnits, http, parseAbi } from 'viem';
 
-import { kiichainTestnet } from '@/constants/tokens';
+import { getToken, kiichainTestnet } from '@/constants/tokens';
 
 // Uniswap V3 NonfungiblePositionManager ABI (only the functions we need)
 const positionManagerAbi = parseAbi([
@@ -24,6 +24,7 @@ interface Position {
   tokenId: bigint;
   token0: Address;
   token1: Address;
+  pool: Address;
   fee: number;
   tickLower: number;
   tickUpper: number;
@@ -121,10 +122,12 @@ const UniswapV3PositionsList: React.FC = () => {
 
           let amount0 = '0';
           let amount1 = '0';
+          let poolAddress: Address =
+            '0x0000000000000000000000000000000000000000';
 
           try {
             // Fetch current sqrtPriceX96 for the pool
-            const poolAddress = await client.readContract({
+            poolAddress = await client.readContract({
               address: '0x0a707f8E245772a3eDB30B6C9C02F26dC43Fcb5c',
               abi: parseAbi([
                 'function getPool(address,address,uint24) view returns (address)',
@@ -166,6 +169,7 @@ const UniswapV3PositionsList: React.FC = () => {
             tokenId,
             token0: position[2],
             token1: position[3],
+            pool: poolAddress,
             fee: position[4],
             tickLower,
             tickUpper,
@@ -224,18 +228,35 @@ const UniswapV3PositionsList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {positions.map((position) => (
-              <tr key={position.tokenId.toString()}>
-                <td className="p-2 border">{position.tokenId.toString()}</td>
-                <td className="p-2 border">{position.token0}</td>
-                <td className="p-2 border">{position.token1}</td>
-                <td className="p-2 border">{position.fee}</td>
-                <td className="p-2 border">{`${position.tickLower} - ${position.tickUpper}`}</td>
-                <td className="p-2 border">{position.liquidity.toString()}</td>
-                <td className="p-2 border">{position.amount0}</td>
-                <td className="p-2 border">{position.amount1}</td>
-              </tr>
-            ))}
+            {positions.map((position) => {
+              const token0 = getToken(position.token0)!;
+              const token1 = getToken(position.token1)!;
+
+              return (
+                <tr key={position.tokenId.toString()}>
+                  <td className="p-2 border">{position.tokenId.toString()}</td>
+                  <td className="p-2 border">
+                    <img src={token0.logoURL} alt={token0.symbol} />
+                  </td>
+                  <td className="p-2 border">
+                    <img src={token1.logoURL} alt={token1.symbol} />
+                  </td>
+                  <td className="p-2 border">{position.fee}</td>
+                  <td className="p-2 border">{`${position.tickLower} - ${position.tickUpper}`}</td>
+                  <td className="p-2 border">
+                    {position.liquidity.toString()}
+                  </td>
+                  <td className="p-2 border">
+                    {formatUnits(BigInt(position.amount0), token0.decimals)}{' '}
+                    {token0.symbol}
+                  </td>
+                  <td className="p-2 border">
+                    {formatUnits(BigInt(position.amount1), token1.decimals)}{' '}
+                    {token1.symbol}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

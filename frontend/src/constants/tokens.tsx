@@ -55,3 +55,56 @@ export const sKII = {
     </div>
   ),
 };
+
+export const TOKENS = [
+  {
+    name: 'Bitcoin',
+    symbol: 'BTC',
+    decimals: 8,
+    address: '0x0b65426e7595758Fc6cc64F926e56C8f5382E778',
+    logoURL: '/assets/btc.png',
+  },
+  {
+    name: 'Ethereum',
+    symbol: 'ETH',
+    decimals: 18,
+    address: '0xdc0234f76B29b3920fD55bB4322676678FEED5a0',
+    logoURL: '/assets/eth.png',
+  },
+  {
+    name: 'Tether',
+    symbol: 'USDT',
+    decimals: 6,
+    address: '0xf506817d2db2FE531b7Ad2B3DFB3173665C4959C',
+    logoURL: '/assets/usdt.png',
+  },
+  {
+    name: 'USD Coin',
+    symbol: 'USDC',
+    decimals: 6,
+    address: '0xc68326408D812507D34eF4b1583cAe2F62953afE',
+    logoURL: '/assets/usdc.png',
+  },
+  {
+    name: 'Dai',
+    symbol: 'DAI',
+    decimals: 18,
+    address: '0x3a83359aFCF4eD34Ee76620944a791d6DE910979',
+    logoURL: '/assets/dai.png',
+  },
+  {
+    name: 'RWA Gold',
+    symbol: 'GOLD',
+    decimals: 18,
+    address: '0xf70893DAf9DeAF1f25C0c67760d6e16A46a19232',
+    logoURL: '/assets/gold.png',
+  },
+];
+
+export const getToken = (addr: string) => {
+  const lowercasedAddr = addr.toLowerCase();
+  return (
+    TOKENS.find((token) => token.address.toLowerCase() === lowercasedAddr) ||
+    null
+  );
+};
