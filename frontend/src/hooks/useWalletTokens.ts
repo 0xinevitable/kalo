@@ -3,24 +3,14 @@ import { Address, createPublicClient, erc20Abi, http, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 
 import { kiichainTestnet } from '@/constants/chain';
-import { KII, TOKENS, TokenInfo } from '@/constants/tokens';
+import { KII, TOKENS, TokenInfo, sKII } from '@/constants/tokens';
 
-// 토큰 타입 정의
-interface Token {
-  address: Address;
-  name: string;
-  symbol: string;
-  decimals: number;
-}
-
-// 토큰 데이터 타입 정의
 type TokenData = TokenInfo & {
   balance: bigint;
   price: number;
   priceDiff24h: number;
 };
 
-// CoinGecko API 타입
 interface CoinGeckoPrice {
   [key: string]: {
     usd: number;
@@ -33,7 +23,6 @@ const client = createPublicClient({
   transport: http(),
 });
 
-// 커스텀 훅 정의
 export function useWalletTokens(address?: Address) {
   const publicClient = usePublicClient();
   const [tokenData, setTokenData] = useState<Record<string, TokenData>>({});
@@ -42,9 +31,9 @@ export function useWalletTokens(address?: Address) {
     if (!address) return;
 
     const fetchTokenData = async () => {
+      const allTokens = [...TOKENS, sKII];
       try {
-        // 멀티콜 계약 호출 준비
-        const calls = TOKENS.flatMap((token) => [
+        const calls = allTokens.flatMap((token) => [
           {
             address: token.address,
             abi: erc20Abi,
@@ -53,7 +42,6 @@ export function useWalletTokens(address?: Address) {
           },
         ]);
 
-        // 멀티콜 실행
         const [results, kiiBalance] = await Promise.all([
           client.multicall({
             contracts: calls,
@@ -68,9 +56,8 @@ export function useWalletTokens(address?: Address) {
         // );
         // const priceData: CoinGeckoPrice = await priceResponse.json();
 
-        // 결과 처리
         const newTokenData: Record<string, TokenData> = {};
-        TOKENS.forEach((token, index) => {
+        allTokens.forEach((token, index) => {
           // @ts-ignore
           const balance = results[index].result as bigint;
           // const priceInfo = priceData[token.symbol.toLowerCase()];

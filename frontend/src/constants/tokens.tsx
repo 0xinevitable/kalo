@@ -32,7 +32,7 @@ export const KII = {
 export const sKII = {
   name: 'sKII',
   symbol: 'sKII',
-  decimals: 6,
+  decimals: 18,
   address: '0x8eB71002a452732E4D7DD399fe956a443717C903',
   logoURL: '/assets/skii.png',
   image: (

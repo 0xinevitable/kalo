@@ -34,7 +34,7 @@ const HomePage: NextPage = () => {
         .map((token) => ({
           ...token,
           valuation:
-            (token.price * parseInt(token.balance.toString())) /
+            (token.price * parseInt((token.balance || 0n).toString())) /
             10 ** token.decimals,
         }))
         .sort(
@@ -115,9 +115,16 @@ const HomePage: NextPage = () => {
 
               <BalanceItem
                 {...sKII}
-                // FIXME:
-                balance={BigInt(211.05 * 10 ** 6)}
-                valuation={100.01}
+                balance={tokenBalances[sKII.address].balance}
+                valuation={
+                  1.002 *
+                  parseFloat(
+                    formatUnits(
+                      tokenBalances[sKII.address].balance,
+                      sKII.decimals,
+                    ),
+                  )
+                }
               />
               <StakeCard />
             </StakeContainer>
@@ -131,17 +138,19 @@ const HomePage: NextPage = () => {
             <Card>
               <CardTitle>Assets</CardTitle>
               <BalanceList>
-                {sortedTokens.map((token) => (
-                  <BalanceItem
-                    key={token.address}
-                    {...token}
-                    balance={token.balance}
-                    valuation={
-                      (token.price * parseInt(token.balance.toString())) /
-                      10 ** token.decimals
-                    }
-                  />
-                ))}
+                {sortedTokens
+                  .filter((v) => v.address !== sKII.address)
+                  .map((token) => (
+                    <BalanceItem
+                      key={token.address}
+                      {...token}
+                      balance={token.balance}
+                      valuation={
+                        (token.price * parseInt(token.balance.toString())) /
+                        10 ** token.decimals
+                      }
+                    />
+                  ))}
               </BalanceList>
             </Card>
             <DefiCardList>
