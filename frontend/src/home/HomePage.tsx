@@ -34,7 +34,7 @@ const HomePage = () => {
       <Notification />
 
       {/* main */}
-      <main className="mt-[100px] flex flex-col w-full max-w-[1000px] mx-auto">
+      <main className="mt-[100px] flex flex-col w-full max-w-[1000px] mx-auto px-4">
         {/* top */}
         <div className="flex w-full gap-4">
           <div className="flex flex-col flex-1 gap-4">

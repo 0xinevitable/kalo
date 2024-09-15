@@ -37,6 +37,9 @@ export default LandingPage;
 
 const Container = styled.main`
   padding: 0 20px;
+  width: 100%;
+  max-width: 100vw;
+  overflow: hidden;
 
   display: flex;
   flex-direction: column;

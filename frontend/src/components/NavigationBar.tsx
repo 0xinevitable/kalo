@@ -21,6 +21,14 @@ const NAVIGATION_ITEMS = [
     title: 'Dashboard',
     href: '/home',
   },
+  {
+    title: 'Swap',
+    href: '/swap',
+  },
+  {
+    title: 'Faucet',
+    href: '/faucet',
+  },
 ];
 
 export const NavigationBar = () => {
@@ -79,7 +87,7 @@ export const NavigationBar = () => {
           {/* <LanguageBadge onClick={onChangeLocale}>
             {currentLanguage.toUpperCase()}
           </LanguageBadge> */}
-          <StartButton>Connect Wallet</StartButton>
+          <StartButton className="primary">Connect Wallet</StartButton>
         </RightContent>
       </Container>
     </Wrapper>
