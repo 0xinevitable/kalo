@@ -59,7 +59,7 @@ function getTokenAmounts(
 }
 
 type V3PositionListProps = {
-  address: Address;
+  address?: Address;
 };
 
 export const V3PositionList: React.FC<V3PositionListProps> = ({ address }) => {
@@ -67,7 +67,10 @@ export const V3PositionList: React.FC<V3PositionListProps> = ({ address }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPositions = async (address: Address) => {
+  const fetchPositions = async (address?: Address) => {
+    if (!address) {
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -189,7 +192,7 @@ export const V3PositionList: React.FC<V3PositionListProps> = ({ address }) => {
   };
 
   useEffect(() => {
-    if (!isAddress(address)) {
+    if (!isAddress(address || '')) {
       return;
     }
     fetchPositions(address);

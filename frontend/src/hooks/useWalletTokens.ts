@@ -34,7 +34,7 @@ const client = createPublicClient({
 });
 
 // 커스텀 훅 정의
-export function useWalletTokens(address: Address) {
+export function useWalletTokens(address?: Address) {
   const publicClient = usePublicClient();
   const [tokenData, setTokenData] = useState<Record<string, TokenData>>({});
 

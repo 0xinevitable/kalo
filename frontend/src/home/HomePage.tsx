@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import { NextPage } from 'next';
 import Image from 'next/image';
 import React, { useMemo } from 'react';
-import { formatUnits, parseUnits } from 'viem';
+import { formatUnits, parseUnits, zeroAddress } from 'viem';
+import { useAccount } from 'wagmi';
 
 import kiiToSkiiImage from '@/assets/kii-to-skii.png';
 import shieldImage from '@/assets/shield.png';
@@ -31,7 +32,7 @@ const HomePage: NextPage = () => {
   const error = '';
   const score = '32.95';
 
-  const address = '0x56855Cc20f5A6745e88F5d357014a540AB081671';
+  const { address } = useAccount();
   const tokenBalances = useWalletTokens(address);
 
   const sortedTokens = useMemo(
@@ -65,12 +66,14 @@ const HomePage: NextPage = () => {
             <SummaryContainer>
               <div className="flex flex-col">
                 <SummaryField>Wallet</SummaryField>
-                <SummaryValue>{shortenAddress(address)}</SummaryValue>
+                <SummaryValue>
+                  {shortenAddress(address || zeroAddress)}
+                </SummaryValue>
               </div>
 
               <div className="flex flex-col">
                 <SummaryField>Total Value</SummaryField>
-                <SummaryValue>$5,496.47</SummaryValue>
+                <SummaryValue>$0</SummaryValue>
               </div>
             </SummaryContainer>
 
