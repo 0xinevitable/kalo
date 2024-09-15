@@ -1,5 +1,11 @@
 import Image from 'next/image';
-import { Address, defineChain, zeroAddress } from 'viem';
+import {
+  Address,
+  createPublicClient,
+  defineChain,
+  http,
+  zeroAddress,
+} from 'viem';
 
 import skiiImage from '@/assets/skii.png';
 
@@ -29,6 +35,11 @@ export const kiichainTestnet = defineChain({
       // blockCreated: ?
     },
   },
+});
+
+export const client = createPublicClient({
+  chain: kiichainTestnet,
+  transport: http(),
 });
 
 export type TokenInfo = {
