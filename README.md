@@ -1,14 +1,14 @@
 # Kalo
 
-![Kalo - The DeFi Hub for KiiChain](./.github/assets/cover.png)
+![Kalo - The DeFi Hub for KiiChain](https://github.com/0xinevitable/kalo/raw/main/.github/assets/cover.png)
 
 ## Background
 
 - KiiChain is a pre-launch stage blockchain based on Cosmos SDK with EVM implementation using Berachain's Polaris, targeting emerging markets and adoption for RWA tokenization & DeFi.
 - Our team, Inevitable, is a group of individuals experienced in designing DeFi and creating products from 0-to-1 on various chains.
-  Inevitable previously won an award in the 2022 Klaymakers hackathon hosted by DoraHacks for the open-source DeFi dashboard, Bento. Our persistent goal is to help users visualize their scattered state across different chains and protocols, enabling them to identify overlooked opportunities.
+  Inevitable previously won an award in the 2022 Klaymakers hackathon hosted by DoraHacks for the [open-source DeFi dashboard, Bento](https://bento.finance/). Our persistent goal is to help users visualize their scattered state across different chains and protocols, enabling them to identify overlooked opportunities.
 - One of the core problems in DeFi is fragmented liquidity and information, which significantly impacts onboarding to the crypto world. Our team's goal was to address this within the DeFi track.
-- When new chains emerge (especially those supporting EVM!), there's often a trend of forking existing ecosystem dApps (like SushiSwap, Uniswap) to capitalize on first-mover financial incentives. Naturally, various DApps will be deployed on KiiChain after its launch. This positive trend can increase the overall TVL of the chain's ecosystem, and we assume this will inevitably occur on KiiChain. However, this proliferation of dApps splits liquidity across multiple platforms, forcing users to navigate between apps to find the best prices. Consequently, user activity and states become fragmented across various DeFi platforms, making assets and information harder to track and potentially obscuring opportunities for users.
+- When new chains emerge (and yes, especially those supporting EVM), there's often a trend of forking existing ecosystem dApps (like SushiSwap, Uniswap) to capitalize on first-mover financial incentives. Naturally, various DApps will be deployed on KiiChain after its launch. This positive trend can increase the overall TVL of the chain's ecosystem, and we assume this will inevitably occur on KiiChain. However, this proliferation of dApps splits liquidity across multiple platforms, forcing users to navigate between apps to find the best prices. Consequently, user activity and states become fragmented across various DeFi platforms, making assets and information harder to track and potentially obscuring opportunities for users.
 
 ## Fragmented Information - DeFi Dashboard
 
@@ -16,30 +16,30 @@ We created Kalo, a dashboard where any user can connect their KiiChain wallet to
 
 ### Humanity Score
 
-- Civil attacks, where users create multiple fake wallets to artificially influence the network, are becoming increasingly diverse. Some projects, including the Ethereum Sepolia PoW Faucet, require a Humanity Score as a countermeasure. Gitcoin Passport provides an onchain Humanity Score through unique identity verification. Users submit proofs of various Web2 (e.g., active GitHub or Discord accounts) and Web3 (e.g., owning premium NFTs) activities, which generate a trustworthiness score for their wallet.
+- Civil attacks, where users create multiple fake wallets to artificially influence the network, are becoming increasingly diverse. Some projects, including the [Ethereum Sepolia PoW Faucet](https://sepolia-faucet.pk910.de/), require a Humanity Score as a countermeasure. [Gitcoin Passport](https://support.passport.xyz/passport-knowledge-base) provides an onchain Humanity Score through unique identity verification. Users submit proofs of various Web2 (e.g., active GitHub or Discord accounts) and Web3 (e.g., owning premium NFTs) activities, which generate a trustworthiness score for their wallet.
 - With the growth of airdrops and real-world businesses targeting emerging markets, we added the ability to view Gitcoin Passport scores in Kalo. This allows users to manage their scores directly through the dashboard and provides a metric to identify suspicious wallets.
 
 ### One-click Stake and Unstake
 
-![Stake](./.github/assets/stake.png)
+![Stake](https://github.com/0xinevitable/kalo/raw/main/.github/assets/stake.png)
 
-- During development, we were impressed by KiiChain's temporary Swap contract provided as a Precompile. It allowed users to freely swap between the native tokens sKII and KII. Although integration was challenging due to an error in the Precompile (which we reported to the KiiChain team via Discord), we deployed a Mocking Contract implementing the ideal sKII behavior. This demo allows users to stake and unstake with a single click. While the original Swap contract required users to manually delegate after receiving sKII, we assumed this process could be abstracted using Polaris precompile magic.
-- In production, implementation could follow the Berachain Liquidstaking Precompile Example as an LSD. Given the unstaking period in Cosmos modules, dashboards like Kalo should opt for selling sKII in the existing market to provide immediate KII to users, rather than unstaking. This approach increases delegations on the chain, incentivizes arbitrage, and potentially increases the overall amount of locked KII.
+- During development, we were impressed by [KiiChain's temporary Swap contract provided as a Precompile](https://github.com/KiiChain/kii-solidity-contracts/blob/2932b6e50cde33f1bc9e7a82148e1b3aa3bc3c70/contracts/Swap.sol#L16). It allowed users to freely swap between the native tokens sKII and KII. Although integration was challenging due to an error in the Precompile (we contacted the KiiChain team and reported the issue via Discord), we deployed a Mocking Contract implementing the ideal sKII behavior. This demo allows users to stake and unstake with a single click. While the original Swap contract required users to manually delegate after receiving sKII, we assumed this process could be abstracted using Polaris's precompile magic.
+- In production, implementation could follow the [Berachain Liquidstaking Precompile Example](https://github.com/berachain/polaris/blob/main/contracts/src/cosmos/precompile/examples/LiquidStaking.sol) as an LSD. Given the unstaking period in Cosmos modules, dashboards like Kalo should opt for selling sKII in the existing market to provide immediate KII to users, rather than unstaking. This approach increases delegations on the chain, incentivizes arbitrage, and potentially increases the overall amount of locked KII.
 - Ideally, active validators in the KiiChain ecosystem would create these LSDs and manage user-facing apps like Kalo, competing to increase their stake. This is the world Inevitable envisions.
 
 ## v3 DEX
 
-![Positions](./.github/assets/positions.png)
+![Positions](https://github.com/0xinevitable/kalo/raw/main/.github/assets/positions.png)
 
 - We believe that stablecoins will be key for onboarding emerging market audiences, given the often underdeveloped financial infrastructure and desire to hedge against local currency inflation in these countries. If KiiChain's hypothesis succeeds, it could lead to tremendous adoption. The onramped capital could then interact with real-world assets through RWA Tokenization.
-- We chose to implement a Concentrated Liquidity DEX as KiiChain's first DeFi project to demonstrate integration with the dashboard. Unlike CPAMM (Constant Product DEX), CLAMM allows liquidity providers to set their desired price range for liquidity utilization, enabling strategic responses for various asset types. This improved capital efficiency allows users to trade with fewer losses, particularly effective for stablecoins.
+- We chose to implement a Concentrated Liquidity DEX as KiiChain's first DeFi project to demonstrate integration with the dashboard. Unlike CPAMM (Constant Product DEX), CLAMM allows liquidity providers to set their desired price range for liquidity utilization, enabling strategic responses for various asset types. This improved capital efficiency allows users to trade with fewer losses, [particularly effective for stablecoins.](https://www.paradigm.xyz/2021/06/uniswap-v3-the-universal-amm)
 - Users can view all their current v3 positions on the dashboard, check the corresponding token quantities based on current reserve ratios (the amount of tokens they would receive if they burned their liquidity position now), and see the calculated valuation.
 
 ## Flywheel
 
 Kalo will create the following flywheel in the KiiChain Ecosystem:
 
-![The Kalo Flywheel](./.github/assets/flywheel.png)
+![The Kalo Flywheel](https://github.com/0xinevitable/kalo/raw/main/.github/assets/flywheel.png)
 
 ## 🛠️ Developer Docs
 
