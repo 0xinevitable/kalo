@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import Image from 'next/image';
 import React from 'react';
+import { NextPage } from 'next'
 
 import kiiToSkiiImage from '@/assets/kii-to-skii.png';
 import shieldImage from '@/assets/shield.png';
@@ -18,7 +19,7 @@ declare global {
   }
 }
 
-const HomePage = () => {
+const HomePage: NextPage = () => {
   // const { score, loading, error } = usePassportScore(
   //   '7865',
   //   '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
