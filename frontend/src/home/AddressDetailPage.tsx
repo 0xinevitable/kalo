@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { NextPage } from 'next';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
-import { formatUnits, zeroAddress } from 'viem';
-import { useAccount } from 'wagmi';
+import { Address, formatUnits, zeroAddress } from 'viem';
 
 import shieldImage from '@/assets/shield.png';
 import { BalanceItem } from '@/components/BalanceItem';
@@ -16,7 +16,7 @@ import { shortenAddress } from '@/utils/address';
 import { StakeCard } from './components/StakeCard';
 import { V3PositionList } from './components/V3PositionList';
 
-const HomePage: NextPage = () => {
+const AddressDetailPage: NextPage = () => {
   // const { score, loading, error } = usePassportScore(
   //   '7865',
   //   '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
@@ -25,7 +25,9 @@ const HomePage: NextPage = () => {
   const error = '';
   const score = '32.95';
 
-  const { address } = useAccount();
+  const router = useRouter();
+  console.log({ router: router.query });
+  const address = router.query.address as Address;
   const tokenBalances = useWalletTokens(address);
 
   const sortedTokens = useMemo(
@@ -163,7 +165,7 @@ const HomePage: NextPage = () => {
   );
 };
 
-export default HomePage;
+export default AddressDetailPage;
 
 const Container = styled.main`
   padding: 42px 20px 0;

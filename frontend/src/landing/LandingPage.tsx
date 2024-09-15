@@ -8,12 +8,6 @@ import { FeaturesSection } from './sections/FeaturesSection';
 import { HeroSection } from './sections/HeroSection';
 import { StakingSection } from './sections/StakingSection';
 
-declare global {
-  interface Window {
-    keplr: any;
-  }
-}
-
 const LandingPage = () => {
   return (
     <>

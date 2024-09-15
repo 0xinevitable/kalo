@@ -124,12 +124,6 @@ const quoterABI = [
   },
 ] as const;
 
-declare global {
-  interface Window {
-    keplr: any;
-  }
-}
-
 const SwapPage: NextPage = () => {
   const [tokenIn, setTokenIn] = useState<TokenInfo>(TOKENS[0]);
   const [tokenOut, setTokenOut] = useState<TokenInfo>(TOKENS[1]);
