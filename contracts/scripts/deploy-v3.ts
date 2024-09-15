@@ -1,7 +1,7 @@
 import { encodeBytes32String } from 'ethers';
-import hre, { ethers } from 'hardhat';
+import { ethers } from 'hardhat';
 
-export const deployUniswapV3 = async () => {
+export const deployV3 = async () => {
   const weth = await (await ethers.getContractFactory('WETH9')).deploy();
   console.log('WETH', await weth.getAddress());
 
@@ -52,5 +52,5 @@ export const deployUniswapV3 = async () => {
 };
 
 if (require.main === module) {
-  deployUniswapV3().catch(console.error);
+  deployV3().catch(console.error);
 }

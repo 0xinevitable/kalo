@@ -14,7 +14,7 @@ import {
   UniswapV3Pool__factory,
 } from '../typechain-types';
 import { deployTokens } from './deploy-tokens';
-import { deployUniswapV3 } from './deploy-v3';
+import { deployV3 } from './deploy-v3';
 
 // Uniswap V3 addresses
 let FACTORY_ADDRESS = '0x0a707f8E245772a3eDB30B6C9C02F26dC43Fcb5c';
@@ -183,7 +183,7 @@ async function addLiquidity(
 async function main() {
   const network = hre.network.name as 'kii' | 'hardhat';
   if (network === 'hardhat') {
-    const v3 = await deployUniswapV3();
+    const v3 = await deployV3();
     FACTORY_ADDRESS = await v3.factory.getAddress();
     NONFUNGIBLE_POSITION_MANAGER_ADDRESS =
       await v3.nfPositionManager.getAddress();
