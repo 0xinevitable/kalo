@@ -1,8 +1,11 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { NoSSR } from './NoSSR';
 
 const Breakpoints = {
   Mobile: 512,
@@ -87,7 +90,10 @@ export const NavigationBar = () => {
           {/* <LanguageBadge onClick={onChangeLocale}>
             {currentLanguage.toUpperCase()}
           </LanguageBadge> */}
-          <StartButton className="primary">Connect Wallet</StartButton>
+          {/* <StartButton className="primary">Connect Wallet</StartButton> */}
+          <NoSSR>
+            <ConnectButton />
+          </NoSSR>
         </RightContent>
       </Container>
     </Wrapper>
