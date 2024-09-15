@@ -49,7 +49,7 @@ export const BalanceItem: React.FC<BalanceItemProps> = ({
   );
 };
 
-const Container = styled.div`
+const Container = styled.li`
   width: 100%;
   padding: 8px 10px 8px 12px;
   display: flex;

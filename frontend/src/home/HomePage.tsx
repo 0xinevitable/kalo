@@ -407,7 +407,7 @@ const CardTitle = styled.h3`
   letter-spacing: -0.96px;
 `;
 
-const BalanceList = styled.div`
+const BalanceList = styled.ul`
   width: 100%;
   display: flex;
   flex-direction: column;

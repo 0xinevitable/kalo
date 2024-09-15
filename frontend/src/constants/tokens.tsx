@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { defineChain, zeroAddress } from 'viem';
+import { Address, defineChain, zeroAddress } from 'viem';
 
 import skiiImage from '@/assets/skii.png';
 
@@ -30,6 +30,15 @@ export const kiichainTestnet = defineChain({
     },
   },
 });
+
+export type TokenInfo = {
+  name: string;
+  symbol: string;
+  decimals: number;
+  address: Address;
+  logoURL: string;
+  image: React.ReactNode;
+};
 
 export const KII = {
   name: 'KII',

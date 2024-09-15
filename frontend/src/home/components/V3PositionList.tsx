@@ -10,6 +10,8 @@ import {
   parseAbi,
 } from 'viem';
 
+import { BalanceList } from '@/components/BalanceList';
+import { PositionItem } from '@/components/PositionItem';
 import { getToken, kiichainTestnet } from '@/constants/tokens';
 
 // Uniswap V3 NonfungiblePositionManager ABI (only the functions we need)
@@ -207,56 +209,27 @@ export const V3PositionList: React.FC<V3PositionListProps> = ({ address }) => {
   }, [address]);
 
   return (
-    <div className="p-4">
+    <>
       {isLoading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {positions.length > 0 && (
-        <table className="w-full border border-collapse">
-          <thead>
-            <tr>
-              <th className="p-2 border">Token ID</th>
-              <th className="p-2 border">Token0</th>
-              <th className="p-2 border">Token1</th>
-              <th className="p-2 border">Fee</th>
-              <th className="p-2 border">Tick Range</th>
-              <th className="p-2 border">Liquidity</th>
-              <th className="p-2 border">Amount0</th>
-              <th className="p-2 border">Amount1</th>
-            </tr>
-          </thead>
-          <tbody>
-            {positions.map((position) => {
-              const token0 = getToken(position.token0)!;
-              const token1 = getToken(position.token1)!;
+        <BalanceList>
+          {positions.map((position) => {
+            const token0 = getToken(position.token0)!;
+            const token1 = getToken(position.token1)!;
 
-              return (
-                <tr key={position.tokenId.toString()}>
-                  <td className="p-2 border">{position.tokenId.toString()}</td>
-                  <td className="p-2 border">
-                    <img src={token0.logoURL} alt={token0.symbol} />
-                  </td>
-                  <td className="p-2 border">
-                    <img src={token1.logoURL} alt={token1.symbol} />
-                  </td>
-                  <td className="p-2 border">{position.fee}</td>
-                  <td className="p-2 border">{`${position.tickLower} - ${position.tickUpper}`}</td>
-                  <td className="p-2 border">
-                    {position.liquidity.toString()}
-                  </td>
-                  <td className="p-2 border">
-                    {formatUnits(BigInt(position.amount0), token0.decimals)}{' '}
-                    {token0.symbol}
-                  </td>
-                  <td className="p-2 border">
-                    {formatUnits(BigInt(position.amount1), token1.decimals)}{' '}
-                    {token1.symbol}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+            return (
+              <PositionItem
+                key={position.tokenId.toString()}
+                token0={token0}
+                token1={token1}
+                amount0={BigInt(position.amount0)}
+                amount1={BigInt(position.amount1)}
+              />
+            );
+          })}
+        </BalanceList>
       )}
-    </div>
+    </>
   );
 };

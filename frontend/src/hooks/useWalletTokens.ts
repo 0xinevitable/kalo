@@ -14,6 +14,7 @@ import { useAccount, usePublicClient } from 'wagmi';
 import {
   KII,
   TOKENS,
+  TokenInfo,
   getToken,
   kiichainTestnet,
   sKII,
@@ -28,14 +29,6 @@ interface Token {
 }
 
 // 토큰 데이터 타입 정의
-type TokenInfo = {
-  name: string;
-  symbol: string;
-  decimals: number;
-  address: Address;
-  logoURL: string;
-  image: React.ReactNode;
-};
 type TokenData = TokenInfo & {
   balance: bigint;
   price: number;
