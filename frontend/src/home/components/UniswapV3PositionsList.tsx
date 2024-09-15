@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Address, createPublicClient, http, parseAbi } from 'viem';
 
 import { kiichainTestnet } from '@/constants/tokens';
 
-// Uniswap V3 NonfungiblePositionManager ABI (only the functions we need)
 const positionManagerAbi = parseAbi([
   'function balanceOf(address owner) view returns (uint256)',
   'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)',
@@ -38,44 +37,59 @@ const UniswapV3PositionsList: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const balance = await client.readContract({
+      const balanceResult = await client.readContract({
         address: POSITION_MANAGER_ADDRESS,
         abi: positionManagerAbi,
         functionName: 'balanceOf',
         args: [address],
       });
 
-      const positionPromises = Array.from({ length: Number(balance) }, (_, i) =>
-        client.readContract({
-          address: POSITION_MANAGER_ADDRESS,
-          abi: positionManagerAbi,
-          functionName: 'tokenOfOwnerByIndex',
-          args: [address, BigInt(i)],
-        }),
-      );
+      const balance = Number(balanceResult);
 
-      const tokenIds = await Promise.all(positionPromises);
+      if (balance === 0) {
+        setPositions([]);
+        setIsLoading(false);
+        return;
+      }
 
-      const positionDetailsPromises = tokenIds.map((tokenId) =>
-        client.readContract({
-          address: POSITION_MANAGER_ADDRESS,
-          abi: positionManagerAbi,
-          functionName: 'positions',
-          args: [tokenId],
-        }),
-      );
-
-      const positionDetails = await Promise.all(positionDetailsPromises);
-
-      const formattedPositions = positionDetails.map((details, index) => ({
-        tokenId: tokenIds[index],
-        token0: details[2],
-        token1: details[3],
-        fee: details[4],
-        tickLower: details[5],
-        tickUpper: details[6],
-        liquidity: details[7],
+      const tokenIdCalls = Array.from({ length: balance }, (_, i) => ({
+        address: POSITION_MANAGER_ADDRESS,
+        abi: positionManagerAbi,
+        functionName: 'tokenOfOwnerByIndex',
+        args: [address, BigInt(i)],
       }));
+
+      const tokenIdsResults = await client.multicall({
+        contracts: tokenIdCalls,
+      });
+
+      // @ts-ignore
+      const tokenIds = tokenIdsResults.map((result) => result.result as bigint);
+
+      const positionCalls = tokenIds.map((tokenId) => ({
+        address: POSITION_MANAGER_ADDRESS,
+        abi: positionManagerAbi,
+        functionName: 'positions',
+        args: [tokenId],
+      }));
+
+      const positionsResults = await client.multicall({
+        contracts: positionCalls,
+      });
+
+      const formattedPositions = positionsResults.map((result, index) => {
+        // @ts-ignore
+        const position = result.result as any[];
+        return {
+          tokenId: tokenIds[index],
+          token0: position[2],
+          token1: position[3],
+          fee: position[4],
+          tickLower: position[5],
+          tickUpper: position[6],
+          liquidity: position[7],
+        };
+      });
 
       setPositions(formattedPositions);
     } catch (err) {

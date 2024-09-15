@@ -23,7 +23,12 @@ export const kiichainTestnet = defineChain({
       apiUrl: '',
     },
   },
-  contracts: {},
+  contracts: {
+    multicall3: {
+      address: '0x032690D03EB035B8D1e43A57086ee5b829ebf316',
+      // blockCreated: ?
+    },
+  },
 });
 
 export const sKII = {
