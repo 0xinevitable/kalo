@@ -23,7 +23,6 @@ export const kiichainTestnet = defineChain({
   contracts: {
     multicall3: {
       address: '0x032690D03EB035B8D1e43A57086ee5b829ebf316',
-      // blockCreated: ?
     },
   },
 });
