@@ -37,7 +37,7 @@ We created Kalo, a dashboard where any user can connect their KiiChain wallet to
 
 ## Flywheel
 
-We aim to create the following flywheel:
+Kalo will create the following flywheel in the KiiChain Ecosystem:
 
 ![The Kalo Flywheel](./.github/assets/flywheel.png)
 
