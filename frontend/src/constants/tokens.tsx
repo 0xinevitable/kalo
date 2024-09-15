@@ -162,3 +162,8 @@ export const getToken = (addr: string) => {
     null
   );
 };
+
+export const HARDCODED_TOKEN_PRICES = {
+  [KII.address]: 1.028,
+  [sKII.address]: 1.002,
+};

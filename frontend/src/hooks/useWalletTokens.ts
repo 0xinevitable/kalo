@@ -3,9 +3,15 @@ import { Address, createPublicClient, erc20Abi, http, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 
 import { kiichainTestnet } from '@/constants/chain';
-import { KII, TOKENS, TokenInfo, sKII } from '@/constants/tokens';
+import {
+  HARDCODED_TOKEN_PRICES,
+  KII,
+  TOKENS,
+  TokenInfo,
+  sKII,
+} from '@/constants/tokens';
 
-type TokenData = TokenInfo & {
+export type TokenBalanceData = TokenInfo & {
   balance: bigint;
   price: number;
   priceDiff24h: number;
@@ -25,7 +31,9 @@ const client = createPublicClient({
 
 export function useWalletTokens(address?: Address) {
   const publicClient = usePublicClient();
-  const [tokenData, setTokenData] = useState<Record<string, TokenData>>({});
+  const [tokenData, setTokenData] = useState<Record<string, TokenBalanceData>>(
+    {},
+  );
 
   useEffect(() => {
     if (!address) return;
@@ -56,7 +64,7 @@ export function useWalletTokens(address?: Address) {
         // );
         // const priceData: CoinGeckoPrice = await priceResponse.json();
 
-        const newTokenData: Record<string, TokenData> = {};
+        const newTokenData: Record<string, TokenBalanceData> = {};
         allTokens.forEach((token, index) => {
           // @ts-ignore
           const balance = results[index].result as bigint;
@@ -67,7 +75,11 @@ export function useWalletTokens(address?: Address) {
           newTokenData[token.address] = {
             ...token,
             balance,
-            price: 0,
+            price:
+              token.address in HARDCODED_TOKEN_PRICES
+                ? // @ts-ignore
+                  HARDCODED_TOKEN_PRICES[token.address]
+                : 0,
             priceDiff24h: 0,
             // price: priceInfo?.usd || 0,
             // priceDiff24h: priceInfo?.usd_24h_change || 0,
@@ -81,8 +93,7 @@ export function useWalletTokens(address?: Address) {
           [zeroAddress]: {
             ...KII,
             balance: kiiBalance || 0n,
-            // FIXME:
-            price: 0,
+            price: HARDCODED_TOKEN_PRICES[KII.address],
             priceDiff24h: 0,
           },
         });

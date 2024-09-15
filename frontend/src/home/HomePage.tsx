@@ -115,18 +115,18 @@ const HomePage: NextPage = () => {
 
               <BalanceItem
                 {...sKII}
-                balance={tokenBalances[sKII.address].balance}
+                balance={tokenBalances[sKII.address]?.balance || 0n}
                 valuation={
                   1.002 *
                   parseFloat(
                     formatUnits(
-                      tokenBalances[sKII.address].balance,
+                      tokenBalances[sKII.address]?.balance || 0n,
                       sKII.decimals,
                     ),
                   )
                 }
               />
-              <StakeCard />
+              <StakeCard tokenBalances={tokenBalances} />
             </StakeContainer>
           </div>
         </div>

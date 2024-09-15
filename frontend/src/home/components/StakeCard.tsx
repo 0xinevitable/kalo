@@ -1,19 +1,23 @@
 import styled from '@emotion/styled';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { formatEther, parseEther } from 'viem';
+import { Address, formatEther, parseEther } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 
 import kiiToSkiiImage from '@/assets/kii-to-skii.png';
 import { KaloButton } from '@/components/KaloButton';
 import { client } from '@/constants/chain';
 import { KII, sKII } from '@/constants/tokens';
+import { TokenBalanceData } from '@/hooks/useWalletTokens';
 
 import { StakeTokenInput } from './StakeTokenInput';
 
 const STAKED_KII_ADDRESS = '0x8eB71002a452732E4D7DD399fe956a443717C903';
 
-export const StakeCard: React.FC = () => {
+type StakeCardProps = {
+  tokenBalances: Record<Address, TokenBalanceData>;
+};
+export const StakeCard: React.FC<StakeCardProps> = ({ tokenBalances }) => {
   const [stage, setStage] = useState<'main' | 'stake' | 'unstake'>('main');
   const [draft, setDraft] = useState<string>('');
   const [estimation, setEstimation] = useState<string>('0');
@@ -137,15 +141,18 @@ export const StakeCard: React.FC = () => {
               token={stage === 'stake' ? KII : sKII}
               value={draft}
               placeholder="0"
+              tokenBalances={tokenBalances}
               onChange={(e) => {
                 setDraft(e.target.value);
               }}
+              setValue={setDraft}
             />
             <StakeTokenInput
               label="Buy"
               token={stage === 'stake' ? sKII : KII}
               disabled
               value={estimation}
+              tokenBalances={tokenBalances}
               onChange={(e) => {
                 setEstimation(e.target.value);
               }}

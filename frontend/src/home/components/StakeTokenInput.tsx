@@ -1,17 +1,26 @@
 import styled from '@emotion/styled';
 import Image from 'next/image';
+import { Address, formatUnits } from 'viem';
 
-import { KII, TokenInfo } from '@/constants/tokens';
+import { HARDCODED_TOKEN_PRICES, KII, TokenInfo } from '@/constants/tokens';
+import { TokenBalanceData } from '@/hooks/useWalletTokens';
 
 type StakeTokenInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label: 'Buy' | 'Sell';
   token: TokenInfo;
+  tokenBalances: Record<Address, TokenBalanceData>;
+  setValue?: (value: string) => void;
 };
 export const StakeTokenInput: React.FC<StakeTokenInputProps> = ({
   label,
   token,
+  tokenBalances,
+  setValue,
   ...inputProps
 }) => {
+  const balance = parseFloat(
+    formatUnits(tokenBalances[token.address].balance, token.decimals),
+  );
   return (
     <Container>
       <div className="flex flex-col w-full">
@@ -36,10 +45,21 @@ export const StakeTokenInput: React.FC<StakeTokenInputProps> = ({
       </div>
 
       <div className="flex justify-between w-full">
-        <Balance>
-          Balance: <span className="underline">132,064.34</span>
+        <Balance
+          className="cursor-pointer"
+          onClick={!setValue ? undefined : () => setValue(balance.toString())}
+        >
+          Balance:{' '}
+          <span className="underline">
+            {balance.toLocaleString(undefined, {
+              maximumFractionDigits: 6,
+            })}
+          </span>
         </Balance>
-        <Valuation>≈ $0.00</Valuation>
+        <Valuation>
+          {/* @ts-ignore */}≈{' '}
+          {`$${balance * HARDCODED_TOKEN_PRICES[token.address]}`}
+        </Valuation>
       </div>
     </Container>
   );
