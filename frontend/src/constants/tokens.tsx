@@ -1,6 +1,30 @@
 import Image from 'next/image';
+import { defineChain } from 'viem';
 
 import skiiImage from '@/assets/skii.png';
+
+export const kiichainTestnet = defineChain({
+  id: 123454321,
+  name: 'Kiichain Tesnet',
+  nativeCurrency: {
+    name: 'kii',
+    symbol: 'kii',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://a.sentry.testnet.kiivalidator.com:8645'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Kiichain Testnet',
+      url: 'https://app.kiiglobal.io/kiichain',
+      apiUrl: '',
+    },
+  },
+  contracts: {},
+});
 
 export const sKII = {
   name: 'sKII',

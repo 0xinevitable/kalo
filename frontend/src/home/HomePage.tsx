@@ -9,6 +9,8 @@ import { Notification } from '@/components/Notification';
 import { sKII } from '@/constants/tokens';
 import { usePassportScore } from '@/hooks/usePassportScore';
 
+import UniswapV3PositionsList from './components/UniswapV3PositionsList';
+
 declare global {
   interface Window {
     keplr: any;
@@ -120,7 +122,9 @@ const HomePage = () => {
             <DefiCardList>
               <Card>
                 <CardTitle>Providing Liquidity</CardTitle>
-                <BalanceList></BalanceList>
+                {/* <BalanceList>
+                </BalanceList> */}
+                <UniswapV3PositionsList />
               </Card>
               <Card>
                 <CardTitle>Launchpad</CardTitle>
