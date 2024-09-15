@@ -5,7 +5,8 @@ import { formatEther, parseEther } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 
 import kiiToSkiiImage from '@/assets/kii-to-skii.png';
-import { KII, client, sKII } from '@/constants/tokens';
+import { client } from '@/constants/chain';
+import { KII, sKII } from '@/constants/tokens';
 
 import { StakeTokenInput } from './StakeTokenInput';
 

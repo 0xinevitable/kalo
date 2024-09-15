@@ -25,13 +25,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-  TOKENS,
-  TokenInfo,
-  client,
-  getToken,
-  kiichainTestnet,
-} from '@/constants/tokens';
+import { client } from '@/constants/chain';
+import { TOKENS, TokenInfo } from '@/constants/tokens';
 // import {
 //   Select,
 //   SelectContent,

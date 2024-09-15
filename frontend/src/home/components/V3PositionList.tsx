@@ -1,11 +1,11 @@
 import { SqrtPriceMath, TickMath } from '@uniswap/v3-sdk';
 import JSBI from 'jsbi';
 import React, { useEffect, useState } from 'react';
-import { Address, createPublicClient, http, isAddress, parseAbi } from 'viem';
+import { Address, isAddress, parseAbi } from 'viem';
 
 import { BalanceList } from '@/components/BalanceList';
 import { PositionItem } from '@/components/PositionItem';
-import { kiichainTestnet } from '@/constants/chain';
+import { client } from '@/constants/chain';
 import { getToken } from '@/constants/tokens';
 
 // Uniswap V3 NonfungiblePositionManager ABI (only the functions we need)
@@ -17,11 +17,6 @@ const positionManagerAbi = parseAbi([
 
 const POSITION_MANAGER_ADDRESS =
   '0x0f7F9402c26b45134953eCfB55B5082A4C643ee0' as const;
-
-const client = createPublicClient({
-  chain: kiichainTestnet,
-  transport: http(),
-});
 
 interface Position {
   tokenId: bigint;
@@ -37,7 +32,6 @@ interface Position {
 }
 
 function getTokenAmounts(
-  sqrtPriceX96: JSBI,
   tickLower: number,
   tickUpper: number,
   liquidity: JSBI,
@@ -154,7 +148,6 @@ export const V3PositionList: React.FC<V3PositionListProps> = ({ address }) => {
               console.log(sqrtPriceX96);
 
               const tokenAmounts = getTokenAmounts(
-                JSBI.BigInt(sqrtPriceX96.toString()),
                 tickLower,
                 tickUpper,
                 liquidity,
