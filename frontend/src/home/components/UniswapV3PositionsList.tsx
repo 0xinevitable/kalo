@@ -1,8 +1,11 @@
+import { FullMath, SqrtPriceMath, TickMath } from '@uniswap/v3-sdk';
+import JSBI from 'jsbi';
 import React, { useState } from 'react';
 import { Address, createPublicClient, http, parseAbi } from 'viem';
 
 import { kiichainTestnet } from '@/constants/tokens';
 
+// Uniswap V3 NonfungiblePositionManager ABI (only the functions we need)
 const positionManagerAbi = parseAbi([
   'function balanceOf(address owner) view returns (uint256)',
   'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)',
@@ -25,6 +28,36 @@ interface Position {
   tickLower: number;
   tickUpper: number;
   liquidity: bigint;
+  amount0: string;
+  amount1: string;
+}
+
+function getTokenAmounts(
+  sqrtPriceX96: JSBI,
+  tickLower: number,
+  tickUpper: number,
+  liquidity: JSBI,
+): { amount0: string; amount1: string } {
+  const sqrtRatioA = TickMath.getSqrtRatioAtTick(tickLower);
+  const sqrtRatioB = TickMath.getSqrtRatioAtTick(tickUpper);
+
+  const amount0 = SqrtPriceMath.getAmount0Delta(
+    sqrtRatioA,
+    sqrtRatioB,
+    liquidity,
+    false,
+  );
+  const amount1 = SqrtPriceMath.getAmount1Delta(
+    sqrtRatioA,
+    sqrtRatioB,
+    liquidity,
+    false,
+  );
+
+  return {
+    amount0: amount0.toString(),
+    amount1: amount1.toString(),
+  };
 }
 
 const UniswapV3PositionsList: React.FC = () => {
@@ -77,19 +110,71 @@ const UniswapV3PositionsList: React.FC = () => {
         contracts: positionCalls,
       });
 
-      const formattedPositions = positionsResults.map((result, index) => {
-        // @ts-ignore
-        const position = result.result as any[];
-        return {
-          tokenId: tokenIds[index],
-          token0: position[2],
-          token1: position[3],
-          fee: position[4],
-          tickLower: position[5],
-          tickUpper: position[6],
-          liquidity: position[7],
-        };
-      });
+      const formattedPositions = await Promise.all(
+        positionsResults.map(async (result, index) => {
+          // @ts-ignore
+          const position = result.result as any[];
+          const tokenId = tokenIds[index];
+          const tickLower = position[5];
+          const tickUpper = position[6];
+          const liquidity = JSBI.BigInt(position[7].toString());
+
+          let amount0 = '0';
+          let amount1 = '0';
+
+          try {
+            // Fetch current sqrtPriceX96 for the pool
+            const poolAddress = await client.readContract({
+              address: '0x0a707f8E245772a3eDB30B6C9C02F26dC43Fcb5c',
+              abi: parseAbi([
+                'function getPool(address,address,uint24) view returns (address)',
+              ]),
+              functionName: 'getPool',
+              args: [position[2], position[3], position[4]],
+            });
+
+            if (poolAddress !== '0x0000000000000000000000000000000000000000') {
+              // @ts-ignore
+              const [sqrtPriceX96] = await client.readContract({
+                address: poolAddress as Address,
+                abi: parseAbi([
+                  'function slot0() view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)',
+                ]),
+                functionName: 'slot0',
+              });
+              console.log(sqrtPriceX96);
+
+              const tokenAmounts = getTokenAmounts(
+                JSBI.BigInt(sqrtPriceX96.toString()),
+                tickLower,
+                tickUpper,
+                liquidity,
+              );
+              amount0 = tokenAmounts.amount0;
+              amount1 = tokenAmounts.amount1;
+            } else {
+              console.log(`Pool does not exist for tokenId: ${tokenId}`);
+            }
+          } catch (error) {
+            console.error(
+              `Error fetching pool data for tokenId: ${tokenId}`,
+              error,
+            );
+          }
+
+          return {
+            tokenId,
+            token0: position[2],
+            token1: position[3],
+            fee: position[4],
+            tickLower,
+            tickUpper,
+            liquidity: BigInt(position[7].toString()),
+            amount0,
+            amount1,
+          };
+        }),
+      );
 
       setPositions(formattedPositions);
     } catch (err) {
@@ -134,6 +219,8 @@ const UniswapV3PositionsList: React.FC = () => {
               <th className="p-2 border">Fee</th>
               <th className="p-2 border">Tick Range</th>
               <th className="p-2 border">Liquidity</th>
+              <th className="p-2 border">Amount0</th>
+              <th className="p-2 border">Amount1</th>
             </tr>
           </thead>
           <tbody>
@@ -145,6 +232,8 @@ const UniswapV3PositionsList: React.FC = () => {
                 <td className="p-2 border">{position.fee}</td>
                 <td className="p-2 border">{`${position.tickLower} - ${position.tickUpper}`}</td>
                 <td className="p-2 border">{position.liquidity.toString()}</td>
+                <td className="p-2 border">{position.amount0}</td>
+                <td className="p-2 border">{position.amount1}</td>
               </tr>
             ))}
           </tbody>
