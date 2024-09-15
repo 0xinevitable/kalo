@@ -5,6 +5,7 @@ import { formatEther, parseEther } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 
 import kiiToSkiiImage from '@/assets/kii-to-skii.png';
+import { KaloButton } from '@/components/KaloButton';
 import { client } from '@/constants/chain';
 import { KII, sKII } from '@/constants/tokens';
 
@@ -76,7 +77,8 @@ export const StakeCard: React.FC = () => {
         });
       }
 
-      await client.waitForTransactionReceipt({ hash: tx });
+      const receipt = await client.waitForTransactionReceipt({ hash: tx });
+      console.log(receipt);
       alert(`${stage === 'stake' ? 'Stake' : 'Unstake'} successful!`);
       setDraft('');
       setEstimation('0');
@@ -101,15 +103,15 @@ export const StakeCard: React.FC = () => {
         <>
           <StakeTitle>Stake KII and receive sKII</StakeTitle>
           <div className="mt-[10px] flex items-center w-full gap-[6px]">
-            <Button
+            <KaloButton
               className="flex-1 primary"
               onClick={() => setStage('stake')}
             >
               Stake
-            </Button>
-            <Button className="flex-1" onClick={() => setStage('unstake')}>
+            </KaloButton>
+            <KaloButton className="flex-1" onClick={() => setStage('unstake')}>
               Unstake
-            </Button>
+            </KaloButton>
           </div>
         </>
       ) : (
@@ -148,13 +150,13 @@ export const StakeCard: React.FC = () => {
                 setEstimation(e.target.value);
               }}
             />
-            <Button
+            <KaloButton
               className="flex-1 w-full primary"
               style={{ padding: '12px 0' }}
               onClick={handleSwap}
             >
               Swap
-            </Button>
+            </KaloButton>
           </div>
         </div>
       )}
@@ -208,34 +210,6 @@ const StakeTitle = styled.h2`
   font-size: 22px;
   font-weight: 500;
   letter-spacing: -0.88px;
-`;
-
-const Button = styled.button`
-  display: flex;
-  height: 36px;
-  padding: 3px 11px;
-  justify-content: center;
-  align-items: center;
-
-  border-radius: 12px;
-  background: #ddd;
-  color: rgba(126, 126, 126, 0.88);
-
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 105%; /* 16.8px */
-  letter-spacing: -0.65px;
-
-  &.primary {
-    background: #5d00ff;
-    color: #ffffff;
-  }
-
-  transition: opacity 0.16s;
-
-  &:hover {
-    opacity: 0.8;
-  }
 `;
 
 const InteractionTitleContainer = styled.div`
