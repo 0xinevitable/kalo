@@ -6,6 +6,7 @@ import { Notification } from '@/components/Notification';
 import { DiagramSection } from './sections/DiagramSection';
 import { FeaturesSection } from './sections/FeaturesSection';
 import { HeroSection } from './sections/HeroSection';
+import { StakingSection } from './sections/StakingSection';
 
 declare global {
   interface Window {
@@ -14,8 +15,6 @@ declare global {
 }
 
 const LandingPage = () => {
-  const [account, setAccount] = useState<string>('');
-
   return (
     <>
       <Notification />
@@ -23,6 +22,7 @@ const LandingPage = () => {
         <HeroSection />
         <FeaturesSection />
         <DiagramSection />
+        <StakingSection />
       </Container>
       <style jsx global>{`
         body {
