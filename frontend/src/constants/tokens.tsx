@@ -72,6 +72,7 @@ export const sKII = {
   name: 'sKII',
   symbol: 'sKII',
   decimals: 6,
+  address: '0x8eB71002a452732E4D7DD399fe956a443717C903',
   image: (
     <div className="w-[36px] h-[36px] relative">
       <Image

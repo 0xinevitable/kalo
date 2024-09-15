@@ -52,3 +52,9 @@ QuoterV2 0xD2dF0d33215bF8924Bebb3490494Af50Aa24b7F1
 │ 1       │ 'USDT-USDC' │ '0x3Eb41EcCC7Dc80dF57A35af685df1aeCdCBf057B' │ 500 │
 └─────────┴─────────────┴──────────────────────────────────────────────┴─────┘
 ```
+
+## Staked KII (Mock)
+
+```
+StakedKII (Mock) 0x8eB71002a452732E4D7DD399fe956a443717C903
+```
